@@ -27,7 +27,15 @@ class Party {
 
         for(let i = 0; i <= 4; i++){
             for(let j = 0; j <= 10; j++){
-
+                if(this.values[i] == j - 2 || this.values[i] == j + 2){
+                    this.count_per_opinion[i][j] == this.getExtremeCount();
+                } else if(this.values[i] == j - 1 || this.values[i] == j + 1){
+                    this.count_per_opinion[i][j] == this.getLeaningCount();
+                } else if(this.values[i] == j){
+                    this.count_per_opinion[i][j] == this.getBasisCount();
+                } else {
+                    this.count_per_opinion[i][j] == 0;
+                }
             }
         }
     }
