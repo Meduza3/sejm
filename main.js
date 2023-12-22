@@ -21,13 +21,13 @@ var Party = /** @class */ (function () {
                     this.count_per_opinion[i][j] == this.getExtremeCount();
                 }
                 else if (this.values[i] == j - 1 || this.values[i] == j + 1) {
-                    this.count_per_opinion[i][j] == this.getLeaningCount();
+                    this.count_per_opinion[i][j] = this.getLeaningCount();
                 }
                 else if (this.values[i] == j) {
-                    this.count_per_opinion[i][j] == this.getBasisCount();
+                    this.count_per_opinion[i][j] = this.getBasisCount();
                 }
                 else {
-                    this.count_per_opinion[i][j] == 0;
+                    this.count_per_opinion[i][j] = 0;
                 }
             }
         }
