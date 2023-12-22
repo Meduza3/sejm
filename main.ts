@@ -18,17 +18,22 @@ class Party {
     count: number;
     values: number[];
     vote: Vote = Vote.Hold;
-    count_per_opinion: number[][] = [];
+    count_per_opinion: number[][] = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0],
+    ]
 
     constructor(name: string, count: number, values: number[]){
         this.name = name;
         this.count = count;
         this.values = values;
 
-        for(let i = 0; i <= 4; i++){
-            for(let j = 0; j <= 10; j++){
+        for(let i = 0; i < 4; i++){
+            for(let j = 0; j < 10; j++){
                 if(this.values[i] == j - 2 || this.values[i] == j + 2){
-                    this.count_per_opinion[i][j] == this.getExtremeCount();
+                    this.count_per_opinion[i][j] = this.getExtremeCount();
                 } else if(this.values[i] == j - 1 || this.values[i] == j + 1){
                     this.count_per_opinion[i][j] = this.getLeaningCount();
                 } else if(this.values[i] == j){

@@ -11,14 +11,19 @@ var Axis = /** @class */ (function () {
 var Party = /** @class */ (function () {
     function Party(name, count, values) {
         this.vote = Vote.Hold;
-        this.count_per_opinion = [];
+        this.count_per_opinion = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ];
         this.name = name;
         this.count = count;
         this.values = values;
-        for (var i = 0; i <= 4; i++) {
-            for (var j = 0; j <= 10; j++) {
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 10; j++) {
                 if (this.values[i] == j - 2 || this.values[i] == j + 2) {
-                    this.count_per_opinion[i][j] == this.getExtremeCount();
+                    this.count_per_opinion[i][j] = this.getExtremeCount();
                 }
                 else if (this.values[i] == j - 1 || this.values[i] == j + 1) {
                     this.count_per_opinion[i][j] = this.getLeaningCount();
