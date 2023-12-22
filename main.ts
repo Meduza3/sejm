@@ -18,12 +18,20 @@ class Party {
     count: number;
     values: number[];
     vote: Vote = Vote.Hold;
+    count_per_opinion: number[][] = [];
 
     constructor(name: string, count: number, values: number[]){
         this.name = name;
         this.count = count;
         this.values = values;
+
+        for(let i = 0; i <= 4; i++){
+            for(let j = 0; j <= 10; j++){
+
+            }
+        }
     }
+
 
     getExtremeCount() {
         return this.count * 0.05;
@@ -41,9 +49,14 @@ class Party {
         this.vote = vote;
     }
 
-    calculateAngryCount(value: number){
+    calculateMadPerAxis(legislation: Legislation, axis: Axis) {
+        let party_opinion = this.values[axis.order];
+        let legislation_value = legislation.values[axis.order];
+
+        
 
     }
+
 }
 
 class Legislation {
