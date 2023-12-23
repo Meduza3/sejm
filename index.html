@@ -19,28 +19,95 @@
       <input type="text" id="ustawa_name_input" class="ustawa_name_input" placeholder="Nazwa Ustawy..." autocomplete="off">
       <div class="ustawa_inputs">
         <div class="row">
-          <div class="axis_label">A:</div>
+          <div class="axis_label">Etatyzm vs Leseferyzm: </div>
           <input id="ustawa_input_0" class="ustawa_input" value="1" type="range" name="B" min="0" autocomplete="off" max="10"/>
         </div>
         <div class="row">
-            <div class="axis_label">B:</div>
+            <div class="axis_label">Duży Budżet vs Mały Budżet: </div>
             <input id="ustawa_input_1" class="ustawa_input" value="1" type="range" name="B" min="0" autocomplete="off" max="10"/>
         </div>
         <div class="row">
-          <div class="axis_label">C:</div>
+          <div class="axis_label">Progres vs Tradycja: </div>
           <input id="ustawa_input_2" class="ustawa_input" value="1" type="range" name="B" min="0" autocomplete="off" max="10"/>
         </div>
         <div class="row">
-          <div class="axis_label">D:</div>
+          <div class="axis_label">EU vs POLEXIT: </div>
           <input id="ustawa_input_3" class="ustawa_input" value="1" type="range" name="B" min="0" autocomplete="off" max="10"/>
         </div>
       </div>
     </div>
-    <button id="play_button">Graj!</button>
+    <div class="column" style="justify-content:center">
+      <input class="ustawa_input_value_display" id="ustawa_input_display_0" value="1" disabled />
+      <input class="ustawa_input_value_display" id="ustawa_input_display_1" value="1" disabled />
+      <input class="ustawa_input_value_display" id="ustawa_input_display_2" value="1" disabled />
+      <input class="ustawa_input_value_display" id="ustawa_input_display_3" value="1" disabled />
+    </div>
+    <br>
+    <br>
+    <button id="initialize_button">Zacznij grę</button>
+    <br>
+    <button id="play_button">Zagraj ustawę</button>
+    <br>
+
+    
   </div>
 
   <div class="column">
     <p>Koryto</p>
+    <div id="axis_0" class="axis">
+      <div class="axis-element">1</div>
+      <div class="axis-element">2</div>
+      <div class="axis-element">3</div>
+      <div class="axis-element">4</div>
+      <div class="axis-element">5</div>
+      <div class="axis-element">6</div>
+      <div class="axis-element">7</div>
+      <div class="axis-element">8</div>
+      <div class="axis-element">9</div>
+      <div id="test_axis_element" class="axis-element">10</div>
+      
+        <div class="player" id="player1"></div>
+        <div class="player" id="player2"></div>
+    </div>
+    <div style="height: 50px"></div>
+    <div id="axis_1" class="axis">
+      <div class="axis-element">1</div>
+      <div class="axis-element">2</div>
+      <div class="axis-element">3</div>
+      <div class="axis-element">4</div>
+      <div class="axis-element">5</div>
+      <div class="axis-element">6</div>
+      <div class="axis-element">7</div>
+      <div class="axis-element">8</div>
+      <div class="axis-element">9</div>
+      <div class="axis-element">10</div>
+    </div>
+    <div style="height: 50px"></div>
+    <div id="axis_2" class="axis">
+      <div class="axis-element">1</div>
+      <div class="axis-element">2</div>
+      <div class="axis-element">3</div>
+      <div class="axis-element">4</div>
+      <div class="axis-element">5</div>
+      <div class="axis-element">6</div>
+      <div class="axis-element">7</div>
+      <div class="axis-element">8</div>
+      <div class="axis-element">9</div>
+      <div class="axis-element">10</div>
+    </div>
+    <div style="height: 50px"></div>
+    <div id="axis_3" class="axis">
+      <div class="axis-element">1</div>
+      <div class="axis-element">2</div>
+      <div class="axis-element">3</div>
+      <div class="axis-element">4</div>
+      <div class="axis-element">5</div>
+      <div class="axis-element">6</div>
+      <div class="axis-element">7</div>
+      <div class="axis-element">8</div>
+      <div class="axis-element">9</div>
+      <div class="axis-element">10</div>
+    </div>
   </div>
 
   <div class="column">

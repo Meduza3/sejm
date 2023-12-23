@@ -4,7 +4,6 @@
 }
 
 .row:after {
-    contet: "";
     display:table;
     clear:both;
 }
@@ -44,10 +43,13 @@
     height:30px;
 }
 
-.axis_label {
-    width: 10%;
+.ustawa_input_value_display {
+    width: 15%;
 }
 
+.axis_label {
+    width: 80%;
+}
 .party_header {
     display: flex;
     align-items: center; /* Aligns items vertically in the center */
@@ -85,4 +87,29 @@
     background-color: #f9f9f9; /* Light grey background */
     border: 1px solid #ccc; /* Light grey border */
     padding: 5px;
+}
+
+.axis {
+    display:flex;
+    justify-content: space-between;
+    position:relative;
+    width: 100%;
+
+}
+
+.axis-element {
+    width: 10%;
+    height: 20px;
+    background-color: transparent;
+    border: black;
+    border-width: 1px;
+    border-style:solid;
+    font-size: 15px;
+    text-align: center;
+}
+
+.player {
+    position: absolute;
+    opacity: 0.5;
+    bottom: 0
 }
