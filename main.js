@@ -271,9 +271,31 @@ document.getElementById('play_button').addEventListener('click', function () {
         parties.push(party);
     }
     console.log(parties);
-    for (var _i = 0, parties_10 = parties; _i < parties_10.length; _i++) {
-        var party = parties_10[_i];
-        party.voteAtRandom();
+    for (var i = 0; i < party_count; i++) {
+        var party = parties[i];
+        console.log("calculating vote for party " + party.name + "Here is their party order: " + party.order);
+        var checkboxes = document.getElementsByName("v_".concat(i));
+        console.log(checkboxes);
+        var selectedValue;
+        for (var i_1 = 0; i_1 < checkboxes.length; i_1++) {
+            var checkbox = checkboxes[i_1];
+            if (checkbox.checked) {
+                console.log(checkbox.value);
+                console.log(checkbox.checked);
+                selectedValue = checkbox.value;
+                break;
+            }
+        }
+        console.log("Selected value: " + selectedValue);
+        if (selectedValue == "FOR") {
+            party.setVote(Vote.FOR);
+        }
+        else if (selectedValue == "AGAINST") {
+            party.setVote(Vote.AGAINST);
+        }
+        else if (selectedValue == "HOLD") {
+            party.setVote(Vote.HOLD);
+        }
     }
     console.log(parties);
     var l_name = document.getElementById("ustawa_name_input");
@@ -286,12 +308,13 @@ document.getElementById('play_button').addEventListener('click', function () {
     console.log(legislation);
     calculateChanges(parties, axes, legislation);
     console.log("finished calculating changes");
+    console.log(parties);
 });
 var party_count = 0;
 function createPartyElement(name) {
     var div = document.createElement('div');
     div.className = 'partia';
-    div.innerHTML = "\n    <div class=\"party_header\">\n    <div style=\"padding=\"5px;\" id=\"pn_".concat(party_count, "\" >").concat(name, "</div>\n    <input class=\"party_count_display\" id=\"pcd_").concat(party_count, "\" type=\"number\" min=\"0\" value=\"150\" max=\"460\"/> \n    <input type=\"checkbox\" id=\"for_").concat(party_count, "\" class=\"for-checkbox\">\n    <input type=\"checkbox\" id=\"against_").concat(party_count, "\" class=\"against-checkbox\">\n    <input type=\"checkbox\" id=\"hold_").concat(party_count, "\" class=\"hold-checkbox\">\n    </div>\n\n\n    <div class=\"party_values\">\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_A\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_B\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_C\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_D\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    </div>\n  ");
+    div.innerHTML = "\n    <div class=\"party_header\">\n    <div style=\"padding=\"5px;\" id=\"pn_".concat(party_count, "\" >").concat(name, "</div>\n    <input class=\"party_count_display\" id=\"pcd_").concat(party_count, "\" type=\"number\" min=\"0\" value=\"150\" max=\"460\"/> \n\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" checked value=\"FOR\" id=\"for_").concat(party_count, "\" class=\"for-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"AGAINST\" id=\"against_").concat(party_count, "\" class=\"against-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"HOLD\" id=\"hold_").concat(party_count, "\" class=\"hold-checkbox\">\n\n    </div>\n\n\n    <div class=\"party_values\">\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_A\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_B\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_C\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_D\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    </div>\n  ");
     var targetColumn = document.getElementById("party_column");
     targetColumn.appendChild(div);
 }

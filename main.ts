@@ -273,8 +273,12 @@ document.getElementById('add_p').addEventListener('click', function() {
 });
 
 document.getElementById('play_button').addEventListener('click', function() {
+
+
     console.log("playing!")
     console.log(party_count);
+
+
     let parties: Party[] = [];
     for(let i = 0; i < party_count; i++){
         const name = document.getElementById(`pn_${i}`);
@@ -289,8 +293,32 @@ document.getElementById('play_button').addEventListener('click', function() {
         parties.push(party);
     }
     console.log(parties)
-    for(let party of parties){
-        party.voteAtRandom();
+
+    for(let i = 0; i < party_count; i++){
+        let party = parties[i]
+        console.log("calculating vote for party " + party.name + "Here is their party order: " + party.order)
+        var checkboxes = document.getElementsByName(`v_${i}`)
+        console.log(checkboxes)
+        var selectedValue;
+        for (let i = 0; i < checkboxes.length; i++) {
+            let checkbox = checkboxes[i] as HTMLInputElement;
+            if (checkbox.checked) {
+                console.log(checkbox.value)
+                console.log(checkbox.checked)
+                selectedValue = checkbox.value;
+                break;
+            }
+        }
+
+        console.log("Selected value: " + selectedValue);
+
+        if(selectedValue == "FOR"){
+            party.setVote(Vote.FOR);
+        } else if(selectedValue == "AGAINST"){
+            party.setVote(Vote.AGAINST);
+        } else if(selectedValue == "HOLD"){
+            party.setVote(Vote.HOLD);
+        }
     }
     console.log(parties)
 
@@ -320,9 +348,11 @@ function createPartyElement(name) {
     <div class="party_header">
     <div style="padding="5px;" id="pn_${party_count}" >${name}</div>
     <input class="party_count_display" id="pcd_${party_count}" type="number" min="0" value="150" max="460"/> 
-    <input type="checkbox" id="for_${party_count}" class="for-checkbox">
-    <input type="checkbox" id="against_${party_count}" class="against-checkbox">
-    <input type="checkbox" id="hold_${party_count}" class="hold-checkbox">
+
+    <input type="radio" name="v_${party_count}" checked value="FOR" id="for_${party_count}" class="for-checkbox">
+    <input type="radio" name="v_${party_count}" value="AGAINST" id="against_${party_count}" class="against-checkbox">
+    <input type="radio" name="v_${party_count}" value="HOLD" id="hold_${party_count}" class="hold-checkbox">
+
     </div>
 
 
