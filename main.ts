@@ -200,6 +200,8 @@ function log(message: string) {
 
 
 function calculateChanges(parties: Party[], axes: Axis[], legislation: Legislation){
+    log("");
+    log("Ustawa: " + legislation.name)
     for(let party of parties){
         if(party.vote != Vote.HOLD){
             for(let axis of axes){
@@ -208,18 +210,18 @@ function calculateChanges(parties: Party[], axes: Axis[], legislation: Legislati
                 }
                 let mad: number = party.calculateMad(legislation, axis);
                 let furious: number = Math.ceil(mad/5);
-                log(party.name + " " + axis.name + " Furious: " + furious);
+                console.log(party.name + " " + axis.name + " Furious: " + furious);
                 let closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
-                log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
+                console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
                 party.count -= furious;
-                log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
+                console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
                 if(closestParty == null){
                     niezrzeszeni += furious;
                 } else {
                     closestParty.count += furious;
-                    log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
+                    console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
                 }
-                
+                log(party.name + " on axis " + axis.name + ": " + furious + " going to " + closestParty.name );
             }
         }
 
@@ -359,6 +361,7 @@ document.getElementById('play_button').addEventListener('click', function() {
 
     calculateChanges(parties, axes, legislation);
     updateCountDisplay(parties);
+    colorCircles();
     console.log("finished calculating changes");
 })
 
@@ -407,6 +410,7 @@ function initialize(){
     setVotes(parties);
     console.log(parties);
     drawOnAxes();
+    colorCircles();
 }
 
 
@@ -480,4 +484,40 @@ for (let i = 0; i < 4; i++) {
         let uid = document.getElementById(`ustawa_input_display_${i}`) as HTMLInputElement;
         uid.value = ui.value;
     });
+}
+
+function createCircle(i: number): HTMLElement {
+    const circle = document.createElement('div');
+    circle.className = 'circle';
+    circle.id = `circle_${i}`;
+    return circle;
+}
+
+function fillContainerWithCircles(containerId: string, totalCircles: number, circlesPerColumn: number): void {
+    const container = document.getElementById(containerId);
+    if (!container) {
+        console.error('Container not found');
+        return;
+    }
+
+    for (let i = 0; i < totalCircles; i++) {
+        container.appendChild(createCircle(i));
+    }
+
+    const columns = Math.ceil(totalCircles / circlesPerColumn);
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+}
+
+fillContainerWithCircles('koryto', 460, 46);
+
+function colorCircles() {
+    let colored = 0;
+    for(let party of parties){
+        for(let i = 0; i < party.count; i++){
+            const circle = document.getElementById(`circle_${colored}`);
+            circle.style.backgroundColor = party.color;
+            colored++;
+        }
+    }
 }

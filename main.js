@@ -177,6 +177,8 @@ function log(message) {
     }
 }
 function calculateChanges(parties, axes, legislation) {
+    log("");
+    log("Ustawa: " + legislation.name);
     for (var _i = 0, parties_5 = parties; _i < parties_5.length; _i++) {
         var party = parties_5[_i];
         if (party.vote != Vote.HOLD) {
@@ -187,18 +189,19 @@ function calculateChanges(parties, axes, legislation) {
                 }
                 var mad = party.calculateMad(legislation, axis);
                 var furious = Math.ceil(mad / 5);
-                log(party.name + " " + axis.name + " Furious: " + furious);
+                console.log(party.name + " " + axis.name + " Furious: " + furious);
                 var closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
-                log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name);
+                console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name);
                 party.count -= furious;
-                log(party.name + " " + axis.name + " Party.count - furious: " + party.count);
+                console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count);
                 if (closestParty == null) {
                     niezrzeszeni += furious;
                 }
                 else {
                     closestParty.count += furious;
-                    log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count);
+                    console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count);
                 }
+                log(party.name + " on axis " + axis.name + ": " + furious + " going to " + closestParty.name);
             }
         }
         console.log(party.name + " count: " + party.count);
@@ -324,6 +327,7 @@ document.getElementById('play_button').addEventListener('click', function () {
     console.log(legislation);
     calculateChanges(parties, axes, legislation);
     updateCountDisplay(parties);
+    colorCircles();
     console.log("finished calculating changes");
 });
 function createPartyElement(name) {
@@ -345,6 +349,7 @@ function initialize() {
     setVotes(parties);
     console.log(parties);
     drawOnAxes();
+    colorCircles();
 }
 var axis_element = document.getElementById('test_axis_element');
 var axis_width = axis_element ? axis_element.offsetWidth : 0;
@@ -408,4 +413,35 @@ var _loop_1 = function (i) {
 };
 for (var i = 0; i < 4; i++) {
     _loop_1(i);
+}
+function createCircle(i) {
+    var circle = document.createElement('div');
+    circle.className = 'circle';
+    circle.id = "circle_".concat(i);
+    return circle;
+}
+function fillContainerWithCircles(containerId, totalCircles, circlesPerColumn) {
+    var container = document.getElementById(containerId);
+    if (!container) {
+        console.error('Container not found');
+        return;
+    }
+    for (var i = 0; i < totalCircles; i++) {
+        container.appendChild(createCircle(i));
+    }
+    var columns = Math.ceil(totalCircles / circlesPerColumn);
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = "repeat(".concat(columns, ", 1fr)");
+}
+fillContainerWithCircles('koryto', 460, 46);
+function colorCircles() {
+    var colored = 0;
+    for (var _i = 0, parties_11 = parties; _i < parties_11.length; _i++) {
+        var party = parties_11[_i];
+        for (var i = 0; i < party.count; i++) {
+            var circle = document.getElementById("circle_".concat(colored));
+            circle.style.backgroundColor = party.color;
+            colored++;
+        }
+    }
 }
