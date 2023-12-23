@@ -14,6 +14,7 @@ class Party {
     count: number;
     values: number[];
     vote: Vote = Vote.HOLD;
+    order: number;
     count_per_opinion: number[][] = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0],
@@ -25,6 +26,7 @@ class Party {
         this.name = name;
         this.count = count;
         this.values = values;
+        this.order = party_count - 1;
 
         for(let i = 0; i < 4; i++){
             for(let j = 0; j < 10; j++){
@@ -183,6 +185,16 @@ enum Vote {
 let numberOfAxes: number = 0;
 
 
+function log(message: string) {
+    const logInput = document.getElementById("log") as HTMLTextAreaElement;
+    if (logInput) {
+        logInput.value += message + "\n"; // Use '\n' for a new line in textarea
+        logInput.scrollTop = logInput.scrollHeight; // Scroll to the bottom
+    }
+}
+
+
+
 function calculateChanges(parties: Party[], axes: Axis[], legislation: Legislation){
     for(let party of parties){
         if(party.vote != Vote.HOLD){
@@ -190,20 +202,22 @@ function calculateChanges(parties: Party[], axes: Axis[], legislation: Legislati
 
                 let mad: number = party.calculateMad(legislation, axis);
                 let furious: number = Math.ceil(mad/5);
-                console.log(party.name + " " + axis.name + "Mad: " + mad);
+                log(party.name + " " + axis.name + " Furious: " + furious);
                 let closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
-                console.log(party.name + " " + axis.name + "ClosestParty: " + closestParty.name)
+                log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
                 party.count -= furious;
-                console.log(party.name + " " + axis.name + "Party.count - mad: " + party.count)
+                log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
                 if(closestParty == null){
                     niezrzeszeni += furious;
                 } else {
                     closestParty.count += furious;
-                    console.log(party.name + " " + axis.name + "ClosestParty.count + mad: " + closestParty.count)
+                    log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
                 }
                 
             }
         }
+        const count_display = document.getElementById(`pcd_${party.order}`) as HTMLInputElement;
+        count_display.value = party.count.toString();
     }
     recalculateCountPerOpinion(parties);
 }
@@ -250,46 +264,76 @@ function getHold(parties: Party[]){
     return count;
 }
 
-main();
 let niezrzeszeni: number = 0;
 
-function main(){
+document.getElementById('add_p').addEventListener('click', function() {
+    const party_name = document.getElementById('party_name_input') as HTMLInputElement;
+   createPartyElement(party_name.value);
+   party_count++;
+});
 
+document.getElementById('play_button').addEventListener('click', function() {
+    console.log("playing!")
+    console.log(party_count);
     let parties: Party[] = [];
+    for(let i = 0; i < party_count; i++){
+        const name = document.getElementById(`pn_${i}`);
+        const count = document.getElementById(`pcd_${i}`) as HTMLInputElement;
 
-    let pis = new Party("Prawo i Sprawiedliwość", 115, [4, 3, 7, 7]);
-    parties.push(pis);
-    let ko = new Party("Koalicja Obywatelska", 115, [6, 5, 4, 4]);
-    parties.push(ko);
-    let lewica = new Party("Nowa Lewica", 115, [8,3,3,3]);
-    parties.push(lewica);
-    let konfa = new Party("Konfederacja", 115, [8, 7, 8, 8])
-    parties.push(konfa);
+        const v1 = document.getElementById(`pvi_${i}_A`) as HTMLInputElement;
+        const v2 = document.getElementById(`pvi_${i}_B`) as HTMLInputElement;
+        const v3 = document.getElementById(`pvi_${i}_C`) as HTMLInputElement;
+        const v4 = document.getElementById(`pvi_${i}_D`) as HTMLInputElement;
 
-
-    let axes: Axis[] = [] 
-    
-    let economic_policy = new Axis("Polityka Ekonomiczna");
-    axes.push(economic_policy);
-    let fiscal_policy = new Axis("Polityka Fiskalna");
-    axes.push(fiscal_policy);
-    let culture = new Axis("Kultura");
-    axes.push(culture);
-    let eu = new Axis("Stosunek do UE");
-    axes.push(eu);
+        let party = new Party(name.innerHTML, +count.value, [+v1.value, +v2.value, +v3.value, +v4.value])
+        parties.push(party);
+    }
+    console.log(parties)
+    for(let party of parties){
+        party.voteAtRandom();
+    }
+    console.log(parties)
 
 
-    let legislation = new Legislation("Ustawa", economic_policy, [7]);
 
-    pis.voteAtRandom();
-    ko.voteAtRandom();
-    lewica.voteAtRandom();
-    ko.voteAtRandom();
+    const l_name = document.getElementById("ustawa_name_input") as HTMLInputElement;
+    const l_v1 = document.getElementById("ustawa_input_0") as HTMLInputElement;
+    const l_v2 = document.getElementById("ustawa_input_1") as HTMLInputElement;
+    const l_v3 = document.getElementById("ustawa_input_2") as HTMLInputElement;
+    const l_v4 = document.getElementById("ustawa_input_3") as HTMLInputElement;
 
-    console.log(parties);
-    console.log("Niezrzeszeni: " + niezrzeszeni)
+    let axes: Axis[] = [new Axis("A"), new Axis("B"), new Axis("C"), new Axis("D"), ]
+
+    let legislation = new Legislation(l_name.value, axes[0], [+l_v1.value, +l_v2.value, +l_v3.value, +l_v4.value]);
+    console.log(legislation);
     calculateChanges(parties, axes, legislation);
+    console.log("finished calculating changes");
     console.log(parties);
-    console.log("Niezrzeszeni: " + niezrzeszeni)
+})
 
+let party_count: number = 0;
+
+function createPartyElement(name) {
+    const div = document.createElement('div');
+    div.className = 'partia';
+    div.innerHTML = `
+    <div class="party_header">
+    <div style="padding="5px;" id="pn_${party_count}" >${name}</div>
+    <input class="party_count_display" id="pcd_${party_count}" type="number" min="0" value="150" max="460"/> 
+    <input type="checkbox" id="for_${party_count}" class="for-checkbox">
+    <input type="checkbox" id="against_${party_count}" class="against-checkbox">
+    <input type="checkbox" id="hold_${party_count}" class="hold-checkbox">
+    </div>
+
+
+    <div class="party_values">
+    <input class="party_value_input" id="pvi_${party_count}_A" type="number" min="1" value="3" max="10"/>
+    <input class="party_value_input" id="pvi_${party_count}_B" type="number" min="1" value="3" max="10"/>
+    <input class="party_value_input" id="pvi_${party_count}_C" type="number" min="1" value="3" max="10"/>
+    <input class="party_value_input" id="pvi_${party_count}_D" type="number" min="1" value="3" max="10"/>
+    </div>
+  `;
+
+  const targetColumn = document.getElementById("party_column");
+  targetColumn.appendChild(div);
 }

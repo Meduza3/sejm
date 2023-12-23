@@ -1,0 +1,88 @@
+.column {
+    float: left;
+    width: 25%;
+}
+
+.row:after {
+    contet: "";
+    display:table;
+    clear:both;
+}
+
+.party {
+    height: 20px;
+}
+
+.party_values {
+    display:flex;
+}
+
+.party_value_input {
+    flex: 1;
+    margin: 2px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    width: 10px;
+}
+
+.ustawa_inputs {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.ustawa_input {
+    flex: 1;
+    margin: 2px;
+    padding: 10px;
+    width: 80%;
+}
+
+.ustawa_name_input {
+    height:30px;
+}
+
+.axis_label {
+    width: 10%;
+}
+
+.party_header {
+    display: flex;
+    align-items: center; /* Aligns items vertically in the center */
+    justify-content: left; /* Distributes space between items */
+}
+
+.party_header p {
+    margin-right: 10px; /* Adds space between the paragraph and the input */
+}
+
+.party_count {
+    width: 30px;
+}
+
+.for-checkbox {
+    accent-color: green;
+    content: '✔';
+}
+
+.against-checkbox {
+    accent-color: red;
+    content: 'X';
+}
+
+.hold-checkbox {
+    accent-color: gold;
+    content: '⏹';
+}
+
+.event_log {
+    height: 400px;
+    width: 95%;
+    resize: vertical;
+    overflow: auto;
+    background-color: #f9f9f9; /* Light grey background */
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 5px;
+}

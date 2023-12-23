@@ -18,6 +18,7 @@ var Party = /** @class */ (function () {
         this.name = name;
         this.count = count;
         this.values = values;
+        this.order = party_count - 1;
         for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 10; j++) {
                 if (this.values[i] == j - 1 || this.values[i] == j + 3) {
@@ -167,6 +168,13 @@ var Vote;
     Vote["HOLD"] = "HOLD";
 })(Vote || (Vote = {}));
 var numberOfAxes = 0;
+function log(message) {
+    var logInput = document.getElementById("log");
+    if (logInput) {
+        logInput.value += message + "\n"; // Use '\n' for a new line in textarea
+        logInput.scrollTop = logInput.scrollHeight; // Scroll to the bottom
+    }
+}
 function calculateChanges(parties, axes, legislation) {
     for (var _i = 0, parties_5 = parties; _i < parties_5.length; _i++) {
         var party = parties_5[_i];
@@ -175,20 +183,22 @@ function calculateChanges(parties, axes, legislation) {
                 var axis = axes_1[_a];
                 var mad = party.calculateMad(legislation, axis);
                 var furious = Math.ceil(mad / 5);
-                console.log(party.name + " " + axis.name + "Mad: " + mad);
+                log(party.name + " " + axis.name + " Furious: " + furious);
                 var closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
-                console.log(party.name + " " + axis.name + "ClosestParty: " + closestParty.name);
+                log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name);
                 party.count -= furious;
-                console.log(party.name + " " + axis.name + "Party.count - mad: " + party.count);
+                log(party.name + " " + axis.name + " Party.count - furious: " + party.count);
                 if (closestParty == null) {
                     niezrzeszeni += furious;
                 }
                 else {
                     closestParty.count += furious;
-                    console.log(party.name + " " + axis.name + "ClosestParty.count + mad: " + closestParty.count);
+                    log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count);
                 }
             }
         }
+        var count_display = document.getElementById("pcd_".concat(party.order));
+        count_display.value = party.count.toString();
     }
     recalculateCountPerOpinion(parties);
 }
@@ -240,35 +250,48 @@ function getHold(parties) {
     }
     return count;
 }
-main();
 var niezrzeszeni = 0;
-function main() {
+document.getElementById('add_p').addEventListener('click', function () {
+    var party_name = document.getElementById('party_name_input');
+    createPartyElement(party_name.value);
+    party_count++;
+});
+document.getElementById('play_button').addEventListener('click', function () {
+    console.log("playing!");
+    console.log(party_count);
     var parties = [];
-    var pis = new Party("Prawo i Sprawiedliwość", 115, [4, 3, 7, 7]);
-    parties.push(pis);
-    var ko = new Party("Koalicja Obywatelska", 115, [6, 5, 4, 4]);
-    parties.push(ko);
-    var lewica = new Party("Nowa Lewica", 115, [8, 3, 3, 3]);
-    parties.push(lewica);
-    var konfa = new Party("Konfederacja", 115, [8, 7, 8, 8]);
-    parties.push(konfa);
-    var axes = [];
-    var economic_policy = new Axis("Polityka Ekonomiczna");
-    axes.push(economic_policy);
-    var fiscal_policy = new Axis("Polityka Fiskalna");
-    axes.push(fiscal_policy);
-    var culture = new Axis("Kultura");
-    axes.push(culture);
-    var eu = new Axis("Stosunek do UE");
-    axes.push(eu);
-    var legislation = new Legislation("Ustawa", economic_policy, [7]);
-    pis.voteAtRandom();
-    ko.voteAtRandom();
-    lewica.voteAtRandom();
-    ko.voteAtRandom();
+    for (var i = 0; i < party_count; i++) {
+        var name_1 = document.getElementById("pn_".concat(i));
+        var count = document.getElementById("pcd_".concat(i));
+        var v1 = document.getElementById("pvi_".concat(i, "_A"));
+        var v2 = document.getElementById("pvi_".concat(i, "_B"));
+        var v3 = document.getElementById("pvi_".concat(i, "_C"));
+        var v4 = document.getElementById("pvi_".concat(i, "_D"));
+        var party = new Party(name_1.innerHTML, +count.value, [+v1.value, +v2.value, +v3.value, +v4.value]);
+        parties.push(party);
+    }
     console.log(parties);
-    console.log("Niezrzeszeni: " + niezrzeszeni);
+    for (var _i = 0, parties_10 = parties; _i < parties_10.length; _i++) {
+        var party = parties_10[_i];
+        party.voteAtRandom();
+    }
+    console.log(parties);
+    var l_name = document.getElementById("ustawa_name_input");
+    var l_v1 = document.getElementById("ustawa_input_0");
+    var l_v2 = document.getElementById("ustawa_input_1");
+    var l_v3 = document.getElementById("ustawa_input_2");
+    var l_v4 = document.getElementById("ustawa_input_3");
+    var axes = [new Axis("A"), new Axis("B"), new Axis("C"), new Axis("D"),];
+    var legislation = new Legislation(l_name.value, axes[0], [+l_v1.value, +l_v2.value, +l_v3.value, +l_v4.value]);
+    console.log(legislation);
     calculateChanges(parties, axes, legislation);
-    console.log(parties);
-    console.log("Niezrzeszeni: " + niezrzeszeni);
+    console.log("finished calculating changes");
+});
+var party_count = 0;
+function createPartyElement(name) {
+    var div = document.createElement('div');
+    div.className = 'partia';
+    div.innerHTML = "\n    <div class=\"party_header\">\n    <div style=\"padding=\"5px;\" id=\"pn_".concat(party_count, "\" >").concat(name, "</div>\n    <input class=\"party_count_display\" id=\"pcd_").concat(party_count, "\" type=\"number\" min=\"0\" value=\"150\" max=\"460\"/> \n    <input type=\"checkbox\" id=\"for_").concat(party_count, "\" class=\"for-checkbox\">\n    <input type=\"checkbox\" id=\"against_").concat(party_count, "\" class=\"against-checkbox\">\n    <input type=\"checkbox\" id=\"hold_").concat(party_count, "\" class=\"hold-checkbox\">\n    </div>\n\n\n    <div class=\"party_values\">\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_A\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_B\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_C\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_D\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    </div>\n  ");
+    var targetColumn = document.getElementById("party_column");
+    targetColumn.appendChild(div);
 }

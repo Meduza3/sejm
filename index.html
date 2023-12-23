@@ -1,9 +1,55 @@
-<html>
-  <head>
-    <title> Gra w sejm. </title>
-  </head>
-  <body>
-    <p> Gra w sejm! </p>
-    <script src="main.js"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gra w Sejm.</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<p> Gra w Sejm.</p>
+<div class="row">
+  <div class="column" id="party_column">
+    <button id="add_p">Dodaj Partię</button>
+    <input type="text" id="party_name_input" placeholder="Nazwa Parti..." autocomplete="off">
+  </div>
+
+  <div class="column">
+    <div class="ustawa">
+      <input type="text" id="ustawa_name_input" class="ustawa_name_input" placeholder="Nazwa Ustawy..." autocomplete="off">
+      <div class="ustawa_inputs">
+        <div class="row">
+          <div class="axis_label">A:</div>
+          <input id="ustawa_input_0" class="ustawa_input" value="1" type="range" name="B" min="0" autocomplete="off" max="10"/>
+        </div>
+        <div class="row">
+            <div class="axis_label">B:</div>
+            <input id="ustawa_input_1" class="ustawa_input" value="1" type="range" name="B" min="0" autocomplete="off" max="10"/>
+        </div>
+        <div class="row">
+          <div class="axis_label">C:</div>
+          <input id="ustawa_input_2" class="ustawa_input" value="1" type="range" name="B" min="0" autocomplete="off" max="10"/>
+        </div>
+        <div class="row">
+          <div class="axis_label">D:</div>
+          <input id="ustawa_input_3" class="ustawa_input" value="1" type="range" name="B" min="0" autocomplete="off" max="10"/>
+        </div>
+      </div>
+    </div>
+    <button id="play_button">Graj!</button>
+  </div>
+
+  <div class="column">
+    <p>Koryto</p>
+  </div>
+
+  <div class="column">
+    <p>log</p>
+    <textarea class="event_log" autocomplete="off" id="log" name="log" disabled></textarea>
+  </div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
 </html>
