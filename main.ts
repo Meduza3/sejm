@@ -108,9 +108,7 @@ class Party {
             }
         }
         if(closestParty == null){
-            //return new Party("Niezrzeszeni", 0, [5, 6, 5, 6], "#fffff")
-            //Don't lose posłowie!
-            return this;
+            return new Party("Niezrzeszeni", 0, [5, 6, 5, 6], "#fffff")
         }
         return closestParty;
     }
@@ -476,26 +474,10 @@ function drawOnAxes(){
     }
 }
 
-let ui0 = document.getElementById("ustawa_input_0") as HTMLInputElement
-ui0.addEventListener('input', () => {
-    let uid0 = document.getElementById("ustawa_input_display_0") as HTMLInputElement
-    uid0.value = ui0.value
-})
-
-let ui1 = document.getElementById("ustawa_input_1") as HTMLInputElement
-ui1.addEventListener('input', () => {
-    let uid1 = document.getElementById("ustawa_input_display_1") as HTMLInputElement
-    uid1.value = ui1.value
-})
-
-let ui2 = document.getElementById("ustawa_input_2") as HTMLInputElement
-ui2.addEventListener('input', () => {
-    let uid2 = document.getElementById("ustawa_input_display_2") as HTMLInputElement
-    uid2.value = ui2.value
-})
-
-let ui3 = document.getElementById("ustawa_input_3") as HTMLInputElement
-ui3.addEventListener('input', () => {
-    let uid3 = document.getElementById("ustawa_input_display_3") as HTMLInputElement
-    uid3.value = ui3.value
-})
+for (let i = 0; i < 4; i++) {
+    let ui = document.getElementById(`ustawa_input_${i}`) as HTMLInputElement;
+    ui.addEventListener('input', () => {
+        let uid = document.getElementById(`ustawa_input_display_${i}`) as HTMLInputElement;
+        uid.value = ui.value;
+    });
+}

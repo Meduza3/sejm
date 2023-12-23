@@ -103,9 +103,7 @@ var Party = /** @class */ (function () {
             }
         }
         if (closestParty == null) {
-            //return new Party("Niezrzeszeni", 0, [5, 6, 5, 6], "#fffff")
-            //Don't lose posłowie!
-            return this;
+            return new Party("Niezrzeszeni", 0, [5, 6, 5, 6], "#fffff");
         }
         return closestParty;
     };
@@ -401,23 +399,13 @@ function drawOnAxes() {
         }
     }
 }
-var ui0 = document.getElementById("ustawa_input_0");
-ui0.addEventListener('input', function () {
-    var uid0 = document.getElementById("ustawa_input_display_0");
-    uid0.value = ui0.value;
-});
-var ui1 = document.getElementById("ustawa_input_1");
-ui1.addEventListener('input', function () {
-    var uid1 = document.getElementById("ustawa_input_display_1");
-    uid1.value = ui1.value;
-});
-var ui2 = document.getElementById("ustawa_input_2");
-ui2.addEventListener('input', function () {
-    var uid2 = document.getElementById("ustawa_input_display_2");
-    uid2.value = ui2.value;
-});
-var ui3 = document.getElementById("ustawa_input_3");
-ui3.addEventListener('input', function () {
-    var uid3 = document.getElementById("ustawa_input_display_3");
-    uid3.value = ui3.value;
-});
+var _loop_1 = function (i) {
+    var ui = document.getElementById("ustawa_input_".concat(i));
+    ui.addEventListener('input', function () {
+        var uid = document.getElementById("ustawa_input_display_".concat(i));
+        uid.value = ui.value;
+    });
+};
+for (var i = 0; i < 4; i++) {
+    _loop_1(i);
+}
