@@ -113,7 +113,7 @@
 .player {
     position: absolute;
     opacity: 0.5;
-    bottom: 0
+    bottom: 20px;
 }
 
 .container {

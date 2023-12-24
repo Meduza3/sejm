@@ -334,7 +334,7 @@ document.getElementById('play_button').addEventListener('click', function () {
 function createPartyElement(name) {
     var div = document.createElement('div');
     div.className = 'partia';
-    div.innerHTML = "\n    <div class=\"party_header\">\n    <div style=\"padding=\"5px;\" id=\"pn_".concat(party_count, "\" >").concat(name, "</div>\n    <input class=\"party_count_display\" id=\"pcd_").concat(party_count, "\" type=\"number\" min=\"0\" value=\"150\" max=\"460\"/> \n\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" checked value=\"FOR\" id=\"for_").concat(party_count, "\" class=\"for-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"AGAINST\" id=\"against_").concat(party_count, "\" class=\"against-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"HOLD\" id=\"hold_").concat(party_count, "\" class=\"hold-checkbox\">\n\n    <input type=\"color\" id=\"party_color_").concat(party_count, "\"/>\n    </div>\n\n\n    <div class=\"party_values\">\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_A\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_B\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_C\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_D\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    </div>\n  ");
+    div.innerHTML = "\n    <div class=\"party_header\">\n    <div style=\"padding=\"5px;\" id=\"pn_".concat(party_count, "\" >").concat(name, "</div>\n    <input class=\"party_count_display\" id=\"pcd_").concat(party_count, "\" type=\"number\" min=\"0\" value=\"150\" max=\"460\"/> \n\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" checked value=\"FOR\" id=\"for_").concat(party_count, "\" class=\"for-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"AGAINST\" id=\"against_").concat(party_count, "\" class=\"against-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"HOLD\" id=\"hold_").concat(party_count, "\" class=\"hold-checkbox\">\n\n    <input type=\"color\" class=\"party_color_input\" id=\"party_color_").concat(party_count, "\"/>\n    </div>\n\n\n    <div class=\"party_values\">\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_A\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_B\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_C\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_D\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    </div>\n  ");
     var targetColumn = document.getElementById("party_column");
     targetColumn.appendChild(div);
 }
@@ -344,6 +344,9 @@ var axes = [new Axis("A"), new Axis("B"), new Axis("C"), new Axis("D"),];
 document.getElementById('initialize_button').addEventListener('click', function () {
     initialize();
 });
+var party_value_inputs = document.querySelectorAll('.party_value_input');
+var party_count_inputs = document.querySelectorAll('.party_count_display');
+var party_color_inputs = document.querySelectorAll('.party_color_input');
 function initialize() {
     console.log("Initializing");
     parties = generatePartyList();
@@ -351,6 +354,18 @@ function initialize() {
     console.log(parties);
     drawOnAxes();
     colorCircles();
+    party_value_inputs = document.querySelectorAll('.party_value_input');
+    party_value_inputs.forEach(function (input) {
+        input.addEventListener('change', initialize);
+    });
+    party_count_inputs = document.querySelectorAll('.party_count_display');
+    party_count_inputs.forEach(function (input) {
+        input.addEventListener('change', initialize);
+    });
+    party_color_inputs = document.querySelectorAll('.party_color_input');
+    party_color_inputs.forEach(function (input) {
+        input.addEventListener('change', initialize);
+    });
 }
 var axis_element = document.getElementById('test_axis_element');
 var axis_width = axis_element ? axis_element.offsetWidth : 0;

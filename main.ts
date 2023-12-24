@@ -380,7 +380,7 @@ function createPartyElement(name) {
     <input type="radio" name="v_${party_count}" value="AGAINST" id="against_${party_count}" class="against-checkbox">
     <input type="radio" name="v_${party_count}" value="HOLD" id="hold_${party_count}" class="hold-checkbox">
 
-    <input type="color" id="party_color_${party_count}"/>
+    <input type="color" class="party_color_input" id="party_color_${party_count}"/>
     </div>
 
 
@@ -405,6 +405,10 @@ document.getElementById('initialize_button').addEventListener('click', function(
     initialize();
 })
 
+
+let party_value_inputs = document.querySelectorAll('.party_value_input');
+let party_count_inputs = document.querySelectorAll('.party_count_display');
+let party_color_inputs = document.querySelectorAll('.party_color_input');
 function initialize(){
     console.log("Initializing");
     parties = generatePartyList();
@@ -412,6 +416,23 @@ function initialize(){
     console.log(parties);
     drawOnAxes();
     colorCircles();
+
+    party_value_inputs = document.querySelectorAll('.party_value_input')
+    party_value_inputs.forEach(input => {
+        input.addEventListener('change', initialize)
+    })
+
+    party_count_inputs = document.querySelectorAll('.party_count_display')
+    party_count_inputs.forEach(input => {
+        input.addEventListener('change', initialize)
+    })
+
+    party_color_inputs = document.querySelectorAll('.party_color_input')
+    party_color_inputs.forEach(input => {
+        input.addEventListener('change', initialize)
+    })
+
+
 }
 
 
