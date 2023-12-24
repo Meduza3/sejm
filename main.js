@@ -121,46 +121,48 @@ var Party = /** @class */ (function () {
     };
     Party.prototype.calculateMad = function (legislation, axis) {
         var mad = 0;
+        var legislation_value = legislation.values[axis.order];
+        console.log("LEGISLATION VALUE: " + legislation_value);
         if (this.vote == Vote.HOLD) {
             return mad;
         }
         if (this.vote == Vote.AGAINST) {
-            if (legislation.values[axis.order] <= 5) {
-                var tolerance_barrier = legislation.values[axis.order] + 1;
-                console.log("tolerance barrier: " + tolerance_barrier);
-                for (var i = 9; i > tolerance_barrier; i--) {
-                    console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i]);
+            console.log(this.name + " VOTED AGAINST " + legislation.name);
+            if (legislation_value <= 5) {
+                console.log(legislation.name + " IS LEWACKA"); //WORKING
+                for (var i = 0; i <= legislation_value; i++) {
+                    console.log(this.name + " count per opinion " + i + ": " + this.count_per_opinion[axis.order][i]);
                     mad += this.count_per_opinion[axis.order][i];
                 }
             }
             else {
-                var tolerance_barrier = legislation.values[axis.order] - 1;
-                console.log("tolerance barrier: " + tolerance_barrier);
-                for (var i = 1; i < tolerance_barrier; i++) {
-                    console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i]);
-                    mad += this.count_per_opinion[axis.order][i];
+                console.log(legislation.name + " IS NOT LEWACKA"); //NOT WORKING
+                for (var i = 10; i > legislation_value - 2; i--) {
+                    console.log(this.name + " count per opinion " + (i - 1) + ": " + this.count_per_opinion[axis.order][i - 1]);
+                    mad += this.count_per_opinion[axis.order][i - 1];
                 }
+                console.log("MAD: " + mad);
             }
         }
-        else {
-            if (legislation.values[axis.order] <= 5) {
-                var tolerance_barrier = legislation.values[axis.order] - 1;
-                console.log("tolerance barrier: " + tolerance_barrier);
-                for (var i = 1; i < tolerance_barrier; i++) {
-                    console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i]);
-                    mad += this.count_per_opinion[axis.order][i];
+        else if (this.vote == Vote.FOR) {
+            console.log(this.name + " VOTED FOR " + legislation.name);
+            if (legislation_value <= 5) {
+                console.log(legislation.name + " IS LEWACKA");
+                //Wkurzą się wszyscy ci, którzy tej ustawy nie popierali: na prawo od 
+                for (var i = 10; i > legislation_value + 1; i--) {
+                    console.log(this.name + " count per opinion " + (i - 1) + ": " + this.count_per_opinion[axis.order][i - 1]);
+                    mad += this.count_per_opinion[axis.order][i - 1];
                 }
             }
             else {
-                var tolerance_barrier = legislation.values[axis.order] + 1;
-                console.log("tolerance barrier: " + tolerance_barrier);
-                for (var i = 9; i > tolerance_barrier; i--) {
-                    console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i]);
+                console.log(legislation.name + " IS NOT LEWACKA");
+                for (var i = 0; i < legislation_value - 2; i++) {
+                    console.log(this.name + " count per opinion " + i + ": " + this.count_per_opinion[axis.order][i]);
                     mad += this.count_per_opinion[axis.order][i];
                 }
             }
-            return Math.ceil(mad);
         }
+        return Math.ceil(mad);
     };
     return Party;
 }());
@@ -200,17 +202,17 @@ function calculateChanges(parties, axes, legislation) {
                 }
                 var mad = party.calculateMad(legislation, axis);
                 var furious = Math.ceil(mad / 5);
-                console.log(party.name + " " + axis.name + " Furious: " + furious);
+                //console.log(party.name + " " + axis.name + " Furious: " + furious);
                 var closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
-                console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name);
+                //console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
                 party.count -= furious;
-                console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count);
+                //console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
                 if (closestParty == null) {
                     niezrzeszeni += furious;
                 }
                 else {
                     closestParty.count += furious;
-                    console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count);
+                    //console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
                 }
                 log(party.name + " on axis " + axis.name + ": " + furious + " going to " + closestParty.name);
             }
@@ -222,10 +224,7 @@ function calculateChanges(parties, axes, legislation) {
 function updateCountDisplay(parties) {
     for (var i = 0; i < party_count; i++) {
         var count_display = document.getElementById("pcd_".concat(i));
-        console.log("Count display value before change: " + count_display.value);
-        console.log("parties[i] name: " + parties[i].name + " parties[i] count: " + parties[i].count);
         count_display.value = parties[i].count.toString();
-        console.log("Count display value after change: " + count_display.value);
     }
 }
 function recalculateCountPerOpinion(parties) {
@@ -233,13 +232,13 @@ function recalculateCountPerOpinion(parties) {
         var party = parties_6[_i];
         for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 10; j++) {
-                if (party.values[i] == j - 2 || party.values[i] == j + 2) {
+                if (party.values[i] == j - 1 || party.values[i] == j + 3) {
                     party.count_per_opinion[i][j] = party.getExtremeCount();
                 }
-                else if (party.values[i] == j - 1 || party.values[i] == j + 1) {
+                else if (party.values[i] == j || party.values[i] == j + 2) {
                     party.count_per_opinion[i][j] = party.getLeaningCount();
                 }
-                else if (party.values[i] == j) {
+                else if (party.values[i] == j + 1) {
                     party.count_per_opinion[i][j] = party.getBasisCount();
                 }
                 else {
@@ -345,16 +344,13 @@ document.getElementById('play_button').addEventListener('click', function () {
 function createPartyElement(name) {
     var div = document.createElement('div');
     div.className = 'partia';
-    div.innerHTML = "\n    <div class=\"party_header\">\n    <div style=\"padding=\"5px;\" id=\"pn_".concat(party_count, "\" >").concat(name, "</div>\n    <input class=\"party_count_display\" id=\"pcd_").concat(party_count, "\" type=\"number\" min=\"0\" value=\"100\" max=\"460\"/> \n\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" checked value=\"FOR\" id=\"for_").concat(party_count, "\" class=\"for-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"AGAINST\" id=\"against_").concat(party_count, "\" class=\"against-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"HOLD\" id=\"hold_").concat(party_count, "\" class=\"hold-checkbox\">\n\n    <input type=\"color\" class=\"party_color_input\" value=\"#4C4CFF\" id=\"party_color_").concat(party_count, "\"/>\n    </div>\n\n\n    <div class=\"party_values\">\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_A\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_B\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_C\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_D\" type=\"number\" min=\"1\" value=\"3\" max=\"10\"/>\n    </div>\n  ");
+    div.innerHTML = "\n    <div class=\"party_header\">\n    <div style=\"padding=\"5px;\" id=\"pn_".concat(party_count, "\" >").concat(name, "</div>\n    <input class=\"party_count_display\" id=\"pcd_").concat(party_count, "\" type=\"number\" min=\"0\" value=\"100\" max=\"460\"/> \n\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" checked value=\"FOR\" id=\"for_").concat(party_count, "\" class=\"for-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"AGAINST\" id=\"against_").concat(party_count, "\" class=\"against-checkbox\">\n    <input type=\"radio\" name=\"v_").concat(party_count, "\" value=\"HOLD\" id=\"hold_").concat(party_count, "\" class=\"hold-checkbox\">\n\n    <input type=\"color\" class=\"party_color_input\" value=\"#4C4CFF\" id=\"party_color_").concat(party_count, "\"/>\n    </div>\n\n\n    <div class=\"party_values\">\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_A\" type=\"number\" min=\"3\" value=\"3\" max=\"8\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_B\" type=\"number\" min=\"3\" value=\"3\" max=\"8\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_C\" type=\"number\" min=\"3\" value=\"3\" max=\"8\"/>\n    <input class=\"party_value_input\" id=\"pvi_").concat(party_count, "_D\" type=\"number\" min=\"3\" value=\"3\" max=\"8\"/>\n    </div>\n  ");
     var targetColumn = document.getElementById("party_column");
     targetColumn.appendChild(div);
 }
 var parties;
 var party_count = 0;
 var axes = [new Axis("A"), new Axis("B"), new Axis("C"), new Axis("D"),];
-document.getElementById('initialize_button').addEventListener('click', function () {
-    initialize();
-});
 var party_value_inputs = document.querySelectorAll('.party_value_input');
 var party_count_inputs = document.querySelectorAll('.party_count_display');
 var party_color_inputs = document.querySelectorAll('.party_color_input');
@@ -431,8 +427,6 @@ function colorAxisElements(axis_value, axisIndex) {
         var element = document.getElementById("axis_element_".concat(axisIndex, "_").concat(elementIndex));
         if (element) {
             var elementValue = parseInt(element.textContent);
-            console.log(elementValue);
-            console.log("axis_value: " + axis_value);
             if (axis_value == 0) {
                 element.style.backgroundColor = "white";
                 continue;

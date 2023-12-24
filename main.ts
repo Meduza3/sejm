@@ -131,56 +131,56 @@ class Party {
 
     calculateMad(legislation: Legislation, axis: Axis): number {
         let mad: number = 0;
+        let legislation_value = legislation.values[axis.order];
+        console.log("LEGISLATION VALUE: " + legislation_value)
 
         if(this.vote == Vote.HOLD){
             return mad;
         }
 
         if(this.vote == Vote.AGAINST){
-            if(legislation.values[axis.order] <= 5){
+            console.log(this.name + " VOTED AGAINST " + legislation.name)
+            if(legislation_value <= 5){
+                console.log(legislation.name + " IS LEWACKA") //WORKING
 
-                let tolerance_barrier: number = legislation.values[axis.order] + 1;
-                console.log("tolerance barrier: " + tolerance_barrier)
-                    for(let i = 9; i > tolerance_barrier; i--){
-                        console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i])
+                    for(let i = 0; i <= legislation_value; i++){
+                        console.log(this.name + " count per opinion " + i + ": " + this.count_per_opinion[axis.order][i])
                         mad += this.count_per_opinion[axis.order][i];
                     }
-    
-    
+
                 } else { 
-                    let tolerance_barrier: number = legislation.values[axis.order] - 1;
-                    console.log("tolerance barrier: " + tolerance_barrier)
-                    for(let i = 1; i < tolerance_barrier; i++){
-                        console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i])
+                    console.log(legislation.name + " IS NOT LEWACKA") //NOT WORKING
+                   for(let i = 10; i > legislation_value - 2; i--){
+                        console.log(this.name + " count per opinion " + (i - 1) + ": " + this.count_per_opinion[axis.order][i - 1])
+                        mad += this.count_per_opinion[axis.order][i - 1];
+                   }
+                   console.log("MAD: " + mad)
+                }
+        } else if(this.vote == Vote.FOR){
+            console.log(this.name + " VOTED FOR " + legislation.name)
+            if(legislation_value <= 5){
+                    console.log(legislation.name + " IS LEWACKA")
+                    //Wkurzą się wszyscy ci, którzy tej ustawy nie popierali: na prawo od 
+                    for(let i = 10; i > legislation_value + 1; i--){
+                        console.log(this.name + " count per opinion " + (i - 1) + ": " + this.count_per_opinion[axis.order][i - 1])
+                        mad += this.count_per_opinion[axis.order][i - 1];
+                    }
+                    
+
+                } else {
+                    console.log(legislation.name + " IS NOT LEWACKA")
+
+                    for(let i = 0; i < legislation_value - 2; i++){
+                        console.log(this.name + " count per opinion " + i + ": " + this.count_per_opinion[axis.order][i])
                         mad += this.count_per_opinion[axis.order][i];
                     }
                 }
-        } else {
-            if(legislation.values[axis.order] <= 5){
-                let tolerance_barrier: number = legislation.values[axis.order] - 1;
-                    console.log("tolerance barrier: " + tolerance_barrier)
-                    for(let i = 1; i < tolerance_barrier; i++){
-                        console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i])
-                        mad += this.count_per_opinion[axis.order][i];
-                    }
-    
-    
-                } else { 
-                let tolerance_barrier: number = legislation.values[axis.order] + 1;
-                console.log("tolerance barrier: " + tolerance_barrier)
-                    for(let i = 9; i > tolerance_barrier; i--){
-                        console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i])
-                        mad += this.count_per_opinion[axis.order][i];
-                    }
         }
         
-        
-
-
         return Math.ceil(mad);
     }
 }
-}
+
 class Legislation {
     name: string;
     main_axis: Axis;
@@ -225,16 +225,16 @@ function calculateChanges(parties: Party[], axes: Axis[], legislation: Legislati
                 }
                 let mad: number = party.calculateMad(legislation, axis);
                 let furious: number = Math.ceil(mad/5);
-                console.log(party.name + " " + axis.name + " Furious: " + furious);
+                //console.log(party.name + " " + axis.name + " Furious: " + furious);
                 let closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
-                console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
+                //console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
                 party.count -= furious;
-                console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
+                //console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
                 if(closestParty == null){
                     niezrzeszeni += furious;
                 } else {
                     closestParty.count += furious;
-                    console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
+                    //console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
                 }
                 log(party.name + " on axis " + axis.name + ": " + furious + " going to " + closestParty.name );
             }
@@ -248,10 +248,7 @@ function calculateChanges(parties: Party[], axes: Axis[], legislation: Legislati
 function updateCountDisplay(parties: Party[]){
     for(let i = 0; i < party_count; i++){
         let count_display = document.getElementById(`pcd_${i}`) as HTMLInputElement;
-        console.log("Count display value before change: " + count_display.value);
-        console.log("parties[i] name: " + parties[i].name + " parties[i] count: " + parties[i].count)
         count_display.value = parties[i].count.toString();
-        console.log("Count display value after change: " + count_display.value);
     }
 }
 
@@ -260,11 +257,11 @@ function recalculateCountPerOpinion(parties: Party[]){
     for(let party of parties){
         for(let i = 0; i < 4; i++){
             for(let j = 0; j < 10; j++){
-                if(party.values[i] == j - 2 || party.values[i] == j + 2){
+                if(party.values[i] == j - 1 || party.values[i] == j + 3){
                     party.count_per_opinion[i][j] = party.getExtremeCount();
-                } else if(party.values[i] == j - 1|| party.values[i] == j + 1){
+                } else if(party.values[i] == j || party.values[i] == j + 2){
                     party.count_per_opinion[i][j] = party.getLeaningCount();
-                } else if(party.values[i] == j){
+                } else if(party.values[i] == j + 1){
                     party.count_per_opinion[i][j] = party.getBasisCount();
                 } else {
                     party.count_per_opinion[i][j] = 0;
@@ -401,10 +398,10 @@ function createPartyElement(name) {
 
 
     <div class="party_values">
-    <input class="party_value_input" id="pvi_${party_count}_A" type="number" min="1" value="3" max="10"/>
-    <input class="party_value_input" id="pvi_${party_count}_B" type="number" min="1" value="3" max="10"/>
-    <input class="party_value_input" id="pvi_${party_count}_C" type="number" min="1" value="3" max="10"/>
-    <input class="party_value_input" id="pvi_${party_count}_D" type="number" min="1" value="3" max="10"/>
+    <input class="party_value_input" id="pvi_${party_count}_A" type="number" min="3" value="3" max="8"/>
+    <input class="party_value_input" id="pvi_${party_count}_B" type="number" min="3" value="3" max="8"/>
+    <input class="party_value_input" id="pvi_${party_count}_C" type="number" min="3" value="3" max="8"/>
+    <input class="party_value_input" id="pvi_${party_count}_D" type="number" min="3" value="3" max="8"/>
     </div>
   `;
   
@@ -417,9 +414,6 @@ let parties: Party[];
 let party_count: number = 0;
 let axes: Axis[] = [new Axis("A"), new Axis("B"), new Axis("C"), new Axis("D"), ]
 
-document.getElementById('initialize_button').addEventListener('click', function() {
-    initialize();
-})
 
 
 let party_value_inputs = document.querySelectorAll('.party_value_input');
@@ -515,8 +509,6 @@ function colorAxisElements(axis_value, axisIndex) {
         if (element) {
             
             const elementValue = parseInt(element.textContent);
-            console.log(elementValue)
-            console.log("axis_value: " + axis_value)
             if(axis_value == 0){
                 element.style.backgroundColor = "white";
                 continue;
