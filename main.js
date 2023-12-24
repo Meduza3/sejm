@@ -270,6 +270,7 @@ document.getElementById('add_p').addEventListener('click', function () {
     var party_name = document.getElementById('party_name_input');
     createPartyElement(party_name.value);
     party_count++;
+    initialize();
 });
 function generatePartyList() {
     var parties = [];
@@ -357,57 +358,40 @@ var axis_height = axis_element ? axis_element.offsetHeight : 0;
 function drawOnAxes() {
     var playerElements = document.querySelectorAll('.player');
     playerElements.forEach(function (el) { return el.remove(); });
+    var offset = 0;
     for (var _i = 0, parties_10 = parties; _i < parties_10.length; _i++) {
         var party = parties_10[_i];
         for (var i = 0; i <= 3; i++) {
             var axis = document.getElementById("axis_".concat(i));
-            var marker_base = document.createElement('div');
-            var marker_leaning_left = document.createElement('div');
-            var marker_leaning_right = document.createElement('div');
-            var marker_extreme_left = document.createElement('div');
-            var marker_extreme_right = document.createElement('div');
-            marker_base.className = "player";
-            marker_leaning_left.className = "player";
-            marker_leaning_right.className = "player";
-            marker_extreme_left.className = "player";
-            marker_extreme_right.className = "player";
             var base_position = party.values[i];
-            var ll_position = base_position - 1;
-            var el_position = base_position - 2;
-            var lr_position = base_position + 1;
-            var er_position = base_position + 2;
-            marker_base.style.left = ((base_position) - 1) * axis_width + 'px';
-            marker_base.style.width = axis_width + 'px';
-            marker_base.style.height = 50 + 'px';
-            marker_base.style.backgroundColor = party.color;
-            marker_leaning_left.style.left = ((ll_position) - 1) * axis_width + 'px';
-            marker_leaning_left.style.width = axis_width + 'px';
-            marker_leaning_left.style.height = 20 + 'px';
-            marker_leaning_left.style.backgroundColor = party.color;
-            marker_leaning_right.style.left = ((lr_position) - 1) * axis_width + 'px';
-            marker_leaning_right.style.width = axis_width + 'px';
-            marker_leaning_right.style.height = 20 + 'px';
-            marker_leaning_right.style.backgroundColor = party.color;
-            marker_extreme_left.style.left = ((el_position) - 1) * axis_width + 'px';
-            marker_extreme_left.style.width = axis_width + 'px';
-            marker_extreme_left.style.height = 5 + 'px';
-            marker_extreme_left.style.backgroundColor = party.color;
-            marker_extreme_right.style.left = ((er_position) - 1) * axis_width + 'px';
-            marker_extreme_right.style.width = axis_width + 'px';
-            marker_extreme_right.style.height = 5 + 'px';
-            marker_extreme_right.style.backgroundColor = party.color;
-            axis.appendChild(marker_base);
-            axis.appendChild(marker_leaning_left);
-            axis.appendChild(marker_leaning_right);
-            axis.appendChild(marker_extreme_left);
-            axis.appendChild(marker_extreme_right);
+            createAndAppendMarker(axis, base_position, 50 + offset, party.color); // Base
+            createAndAppendMarker(axis, base_position - 1, 20 + offset, party.color); // Leaning left
+            createAndAppendMarker(axis, base_position + 1, 20 + offset, party.color); // Leaning right
+            createAndAppendMarker(axis, base_position - 2, 5 + offset, party.color); // Extreme left
+            createAndAppendMarker(axis, base_position + 2, 5 + offset, party.color); // Extreme right
+            offset++;
         }
     }
+}
+function createAndAppendMarker(axis, position, height, color) {
+    var marker = document.createElement('div');
+    marker.className = "player";
+    marker.style.left = (position - 1) * axis_width + 'px';
+    marker.style.width = axis_width + 'px';
+    marker.style.height = height + 'px';
+    marker.style.backgroundColor = color;
+    axis.appendChild(marker);
 }
 var _loop_1 = function (i) {
     var ui = document.getElementById("ustawa_input_".concat(i));
     ui.addEventListener('input', function () {
         var uid = document.getElementById("ustawa_input_display_".concat(i));
+        if (parseInt(ui.value) <= 5) {
+            ui.style.accentColor = "green";
+        }
+        else {
+            ui.style.accentColor = "red";
+        }
         uid.value = ui.value;
     });
 };
@@ -435,13 +419,22 @@ function fillContainerWithCircles(containerId, totalCircles, circlesPerColumn) {
 }
 fillContainerWithCircles('koryto', 460, 46);
 function colorCircles() {
-    var colored = 0;
+    var coloredCirclesCount = 0;
     for (var _i = 0, parties_11 = parties; _i < parties_11.length; _i++) {
         var party = parties_11[_i];
         for (var i = 0; i < party.count; i++) {
-            var circle = document.getElementById("circle_".concat(colored));
-            circle.style.backgroundColor = party.color;
-            colored++;
+            var circle = document.getElementById("circle_".concat(coloredCirclesCount));
+            if (circle) {
+                circle.style.backgroundColor = party.color;
+                coloredCirclesCount++;
+            }
+        }
+    }
+    for (var i = 490; i >= coloredCirclesCount; i--) {
+        var circle = document.getElementById("circle_".concat(i));
+        console.log(circle);
+        if (circle) {
+            circle.style.backgroundColor = "gray";
         }
     }
 }

@@ -289,6 +289,7 @@ document.getElementById('add_p').addEventListener('click', function() {
     const party_name = document.getElementById('party_name_input') as HTMLInputElement;
    createPartyElement(party_name.value);
    party_count++;
+   initialize()
 });
 
 
@@ -390,7 +391,7 @@ function createPartyElement(name) {
     <input class="party_value_input" id="pvi_${party_count}_D" type="number" min="1" value="3" max="10"/>
     </div>
   `;
-
+  
   const targetColumn = document.getElementById("party_column");
   targetColumn.appendChild(div);
 }
@@ -418,70 +419,46 @@ const axis_element = document.getElementById('test_axis_element');
 const axis_width = axis_element ? axis_element.offsetWidth: 0;
 const axis_height = axis_element ? axis_element.offsetHeight : 0;
 
-function drawOnAxes(){
+function drawOnAxes() {
     const playerElements = document.querySelectorAll('.player');
     playerElements.forEach(el => el.remove());
 
-    for(let party of parties){
-        
-        for(let i = 0; i <= 3; i++){
+    let offset:number = 0;
+    for (let party of parties) {
+        for (let i = 0; i <= 3; i++) {
             const axis = document.getElementById(`axis_${i}`);
-            const marker_base = document.createElement('div');
-            const marker_leaning_left = document.createElement('div');
-            const marker_leaning_right = document.createElement('div');
-            const marker_extreme_left = document.createElement('div');
-            const marker_extreme_right = document.createElement('div');
-
-            marker_base.className = "player";
-            marker_leaning_left.className = "player";
-            marker_leaning_right.className = "player";
-            marker_extreme_left.className = "player";
-            marker_extreme_right.className = "player";
             const base_position = party.values[i];
-            const ll_position = base_position - 1;
-            const el_position = base_position - 2;
-            const lr_position = base_position + 1
-            const er_position = base_position + 2;
-            
-            marker_base.style.left = ((base_position) - 1)* axis_width + 'px'
-            marker_base.style.width = axis_width + 'px';
-            marker_base.style.height = 50 + 'px';
-            marker_base.style.backgroundColor = party.color;
 
-            marker_leaning_left.style.left = ((ll_position) -1) * axis_width + 'px'
-            marker_leaning_left.style.width = axis_width + 'px';
-            marker_leaning_left.style.height = 20 + 'px';
-            marker_leaning_left.style.backgroundColor = party.color;
-
-            marker_leaning_right.style.left = ((lr_position) - 1)* axis_width + 'px'
-            marker_leaning_right.style.width = axis_width + 'px';
-            marker_leaning_right.style.height = 20 + 'px';
-            marker_leaning_right.style.backgroundColor = party.color;
-
-            marker_extreme_left.style.left = ((el_position) -1)* axis_width + 'px'
-            marker_extreme_left.style.width = axis_width + 'px';
-            marker_extreme_left.style.height = 5 + 'px';
-            marker_extreme_left.style.backgroundColor = party.color;
-
-            marker_extreme_right.style.left = ((er_position) -1)* axis_width + 'px'
-            marker_extreme_right.style.width = axis_width + 'px';
-            marker_extreme_right.style.height = 5 + 'px';
-            marker_extreme_right.style.backgroundColor = party.color;
-
-
-            axis.appendChild(marker_base);
-            axis.appendChild(marker_leaning_left);
-            axis.appendChild(marker_leaning_right);
-            axis.appendChild(marker_extreme_left);
-            axis.appendChild(marker_extreme_right);
+            createAndAppendMarker(axis, base_position, 50 + offset, party.color); // Base
+            createAndAppendMarker(axis, base_position - 1, 20 + offset, party.color); // Leaning left
+            createAndAppendMarker(axis, base_position + 1, 20 + offset, party.color); // Leaning right
+            createAndAppendMarker(axis, base_position - 2, 5 + offset, party.color); // Extreme left
+            createAndAppendMarker(axis, base_position + 2, 5 + offset, party.color); // Extreme right
+            offset++;
         }
     }
 }
+
+function createAndAppendMarker(axis, position, height, color) {
+    const marker = document.createElement('div');
+    marker.className = "player";
+    marker.style.left = (position - 1) * axis_width + 'px';
+    marker.style.width = axis_width + 'px';
+    marker.style.height = height + 'px';
+    marker.style.backgroundColor = color;
+    axis.appendChild(marker);
+}
+
 
 for (let i = 0; i < 4; i++) {
     let ui = document.getElementById(`ustawa_input_${i}`) as HTMLInputElement;
     ui.addEventListener('input', () => {
         let uid = document.getElementById(`ustawa_input_display_${i}`) as HTMLInputElement;
+        if(parseInt(ui.value) <= 5) {
+            ui.style.accentColor = "green";
+        } else {
+            ui.style.accentColor = "red";
+        }
         uid.value = ui.value;
     });
 }
@@ -512,12 +489,21 @@ function fillContainerWithCircles(containerId: string, totalCircles: number, cir
 fillContainerWithCircles('koryto', 460, 46);
 
 function colorCircles() {
-    let colored = 0;
-    for(let party of parties){
-        for(let i = 0; i < party.count; i++){
-            const circle = document.getElementById(`circle_${colored}`);
-            circle.style.backgroundColor = party.color;
-            colored++;
+    let coloredCirclesCount = 0;
+    for (let party of parties) {
+        for (let i = 0; i < party.count; i++) {
+            const circle = document.getElementById(`circle_${coloredCirclesCount}`);
+            if (circle) {
+                circle.style.backgroundColor = party.color;
+                coloredCirclesCount++;
+            }
+        }
+    }
+    for (let i = 490; i >= coloredCirclesCount; i--) {
+        const circle = document.getElementById(`circle_${i}`);
+        console.log(circle);
+        if (circle) {
+            circle.style.backgroundColor = "gray";
         }
     }
 }
