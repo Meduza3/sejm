@@ -136,36 +136,51 @@ class Party {
             return mad;
         }
 
-        
-        if(legislation.values[axis.order] <= 5){
+        if(this.vote == Vote.AGAINST){
+            if(legislation.values[axis.order] <= 5){
 
-            let tolerance_barrier: number = legislation.values[axis.order];
-
-            if(this.vote == Vote.FOR){ //LEWICOWA ZA
-                for(let i = 9; i > tolerance_barrier - 1; i--){
-                    mad += this.count_per_opinion[axis.order][i];
+                let tolerance_barrier: number = legislation.values[axis.order] + 1;
+                console.log("tolerance barrier: " + tolerance_barrier)
+                    for(let i = 9; i > tolerance_barrier; i--){
+                        console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i])
+                        mad += this.count_per_opinion[axis.order][i];
+                    }
+    
+    
+                } else { 
+                    let tolerance_barrier: number = legislation.values[axis.order] - 1;
+                    console.log("tolerance barrier: " + tolerance_barrier)
+                    for(let i = 1; i < tolerance_barrier; i++){
+                        console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i])
+                        mad += this.count_per_opinion[axis.order][i];
+                    }
                 }
-            } else { // LEWICOWA PRZECIW ???
-                for(let i = 0; i <= tolerance_barrier - 1; i++){
-                    mad += this.count_per_opinion[axis.order][i];
-                }
-            }
-        } else{
-            let tolerance_barrier: number = legislation.values[axis.order] - 2;
-            if(this.vote == Vote.FOR){ //PRAWICOWA ZA
-                for(let i = 0; i < tolerance_barrier - 1; i++){
-                    mad += this.count_per_opinion[axis.order][i];
-                }
-            } else { //PRAWICOWA PRZECIW
-                for(let i = 9; i >= tolerance_barrier - 1; i--){
-                    mad += this.count_per_opinion[axis.order][i];
-                }
-            }
+        } else {
+            if(legislation.values[axis.order] <= 5){
+                let tolerance_barrier: number = legislation.values[axis.order] - 1;
+                    console.log("tolerance barrier: " + tolerance_barrier)
+                    for(let i = 1; i < tolerance_barrier; i++){
+                        console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i])
+                        mad += this.count_per_opinion[axis.order][i];
+                    }
+    
+    
+                } else { 
+                let tolerance_barrier: number = legislation.values[axis.order] + 1;
+                console.log("tolerance barrier: " + tolerance_barrier)
+                    for(let i = 9; i > tolerance_barrier; i--){
+                        console.log("count of opinion " + i + ": " + this.count_per_opinion[axis.order][i])
+                        mad += this.count_per_opinion[axis.order][i];
+                    }
         }
+        
+        
+
+
         return Math.ceil(mad);
     }
 }
-
+}
 class Legislation {
     name: string;
     main_axis: Axis;
@@ -187,7 +202,7 @@ enum Vote {
 
 
 let numberOfAxes: number = 0;
-
+initialize();
 
 function log(message: string) {
     const logInput = document.getElementById("log") as HTMLTextAreaElement;
@@ -245,11 +260,11 @@ function recalculateCountPerOpinion(parties: Party[]){
     for(let party of parties){
         for(let i = 0; i < 4; i++){
             for(let j = 0; j < 10; j++){
-                if(party.values[i] == j - 1 || party.values[i] == j + 3){
+                if(party.values[i] == j - 2 || party.values[i] == j + 2){
                     party.count_per_opinion[i][j] = party.getExtremeCount();
-                } else if(party.values[i] == j || party.values[i] == j + 2){
+                } else if(party.values[i] == j - 1|| party.values[i] == j + 1){
                     party.count_per_opinion[i][j] = party.getLeaningCount();
-                } else if(party.values[i] == j + 1){
+                } else if(party.values[i] == j){
                     party.count_per_opinion[i][j] = party.getBasisCount();
                 } else {
                     party.count_per_opinion[i][j] = 0;
@@ -371,16 +386,17 @@ document.getElementById('play_button').addEventListener('click', function() {
 function createPartyElement(name) {
     const div = document.createElement('div');
     div.className = 'partia';
+
     div.innerHTML = `
     <div class="party_header">
     <div style="padding="5px;" id="pn_${party_count}" >${name}</div>
-    <input class="party_count_display" id="pcd_${party_count}" type="number" min="0" value="150" max="460"/> 
+    <input class="party_count_display" id="pcd_${party_count}" type="number" min="0" value="100" max="460"/> 
 
     <input type="radio" name="v_${party_count}" checked value="FOR" id="for_${party_count}" class="for-checkbox">
     <input type="radio" name="v_${party_count}" value="AGAINST" id="against_${party_count}" class="against-checkbox">
     <input type="radio" name="v_${party_count}" value="HOLD" id="hold_${party_count}" class="hold-checkbox">
 
-    <input type="color" class="party_color_input" id="party_color_${party_count}"/>
+    <input type="color" class="party_color_input" value="#4C4CFF" id="party_color_${party_count}"/>
     </div>
 
 
@@ -409,6 +425,7 @@ document.getElementById('initialize_button').addEventListener('click', function(
 let party_value_inputs = document.querySelectorAll('.party_value_input');
 let party_count_inputs = document.querySelectorAll('.party_count_display');
 let party_color_inputs = document.querySelectorAll('.party_color_input');
+
 function initialize(){
     console.log("Initializing");
     parties = generatePartyList();
@@ -416,6 +433,10 @@ function initialize(){
     console.log(parties);
     drawOnAxes();
     colorCircles();
+    recalculateCountPerOpinion(parties);
+    
+    
+
 
     party_value_inputs = document.querySelectorAll('.party_value_input')
     party_value_inputs.forEach(input => {
@@ -436,7 +457,7 @@ function initialize(){
 }
 
 
-const axis_element = document.getElementById('test_axis_element');
+const axis_element = document.getElementById('axis_element_2_9');
 const axis_width = axis_element ? axis_element.offsetWidth: 0;
 const axis_height = axis_element ? axis_element.offsetHeight : 0;
 
@@ -481,8 +502,43 @@ for (let i = 0; i < 4; i++) {
             ui.style.accentColor = "red";
         }
         uid.value = ui.value;
+
+            colorAxisElements(ui.value,i)
+
     });
 }
+
+function colorAxisElements(axis_value, axisIndex) {
+    for (let elementIndex = 1; elementIndex <= 10; elementIndex++) {
+        const element = document.getElementById(`axis_element_${axisIndex}_${elementIndex}`);
+
+        if (element) {
+            
+            const elementValue = parseInt(element.textContent);
+            console.log(elementValue)
+            console.log("axis_value: " + axis_value)
+            if(axis_value == 0){
+                element.style.backgroundColor = "white";
+                continue;
+            }
+            if (axis_value == 1) element.style.backgroundColor = (elementValue < 3) ? "gold" : "white";
+            if (axis_value == 2) element.style.backgroundColor = (elementValue < 4) ? "gold" : "white";
+            if (axis_value == 3) element.style.backgroundColor = (elementValue < 5) ? "gold" : "white";
+            if (axis_value == 4) element.style.backgroundColor = (elementValue < 6) ? "gold" : "white";
+            if (axis_value == 5) element.style.backgroundColor = (elementValue < 7) ? "gold" : "white";
+
+            if (axis_value == 6) element.style.backgroundColor = (elementValue > 4) ? "gold" : "white";
+            if (axis_value == 7) element.style.backgroundColor = (elementValue > 5) ? "gold" : "white";
+            if (axis_value == 8) element.style.backgroundColor = (elementValue > 6) ? "gold" : "white";
+            if (axis_value == 9) element.style.backgroundColor = (elementValue > 7) ? "gold" : "white";
+            if (axis_value == 10) element.style.backgroundColor = (elementValue > 8) ? "gold" : "white";
+        }
+    }
+}
+
+
+
+
 
 function createCircle(i: number): HTMLElement {
     const circle = document.createElement('div');
@@ -522,7 +578,6 @@ function colorCircles() {
     }
     for (let i = 490; i >= coloredCirclesCount; i--) {
         const circle = document.getElementById(`circle_${i}`);
-        console.log(circle);
         if (circle) {
             circle.style.backgroundColor = "gray";
         }
