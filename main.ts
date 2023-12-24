@@ -108,7 +108,7 @@ class Party {
             }
         }
         if(closestParty == null){
-            return this;
+            return new Party("Niezrzeszeni", 0, [0,0,0,0], "grey");
         }
         return closestParty;
     }
