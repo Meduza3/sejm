@@ -223,8 +223,6 @@ function log(message: string) {
 
 
 function calculateChanges(parties: Party[], axes: Axis[], legislation: Legislation){
-    log("");
-    log("Ustawa: " + legislation.name)
     for(let party of parties){
         if(party.vote != Vote.HOLD){
             for(let axis of axes){
@@ -308,6 +306,13 @@ function getHold(parties: Party[]){
 
 let niezrzeszeni: number = 0;
 
+function countNiezrzeszeni(parties: Party[]) {
+    niezrzeszeni = 460;
+    for(let party of parties){
+        niezrzeszeni -= party.count;
+    }
+}
+
 document.getElementById('add_p').addEventListener('click', function() {
     const party_name = document.getElementById('party_name_input') as HTMLInputElement;
    createPartyElement(party_name.value);
@@ -376,18 +381,51 @@ document.getElementById('play_button').addEventListener('click', function() {
 
     console.log("playing!")
     console.log("Number of parties: " + party_count);
-
-    console.log("Number of parties: " + party_count);
+    let u_input = document.getElementById("ustawa_name_input") as HTMLInputElement
+    log("");
+    log("Ustawa: " + u_input.value);
 
     let legislation = setLegislation(axes);
 
     console.log(legislation);
 
+    displayOutcome(parties);
     calculateChanges(parties, axes, legislation);
+    countNiezrzeszeni(parties);
     updateCountDisplay(parties);
     colorCircles();
     console.log("finished calculating changes");
 })
+
+function displayOutcome(parties: Party[]){
+    let for_count = 0;
+    let against_count = 0;
+    let hold_count = 0;
+    if(Math.random() >= 0.5){
+        log("Niezrzeszeni zagłosowali: ZA")
+        for_count += niezrzeszeni;
+    } else {
+        log("Niezrzeszeni zagłosowali: PRZECIW")
+        against_count += niezrzeszeni;
+    }
+    for(let party of parties){
+        if(party.vote == Vote.FOR){
+            for_count += party.count;
+        } else if (party.vote == Vote.AGAINST){
+            against_count += party.count;
+        } else if (party.vote == Vote.HOLD){
+            hold_count += party.count;
+        }
+    }
+    log("ZA: " + for_count);
+    log("PRZECIW: " + against_count);
+    log("WSTRZYMAŁO SIĘ: " + hold_count);
+    if(for_count > against_count){
+        log("Ustawa przyjęta");
+    } else {
+        log("Ustawa odrzucona");
+    }
+}
 
 
 
@@ -439,6 +477,7 @@ function initialize(){
     drawOnAxes();
     colorCircles();
     recalculateCountPerOpinion(parties);
+    countNiezrzeszeni(parties);
     
     
 

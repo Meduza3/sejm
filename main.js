@@ -196,8 +196,6 @@ function log(message) {
     }
 }
 function calculateChanges(parties, axes, legislation) {
-    log("");
-    log("Ustawa: " + legislation.name);
     for (var _i = 0, parties_2 = parties; _i < parties_2.length; _i++) {
         var party = parties_2[_i];
         if (party.vote != Vote.HOLD) {
@@ -284,6 +282,13 @@ function getHold(parties) {
     return count;
 }
 var niezrzeszeni = 0;
+function countNiezrzeszeni(parties) {
+    niezrzeszeni = 460;
+    for (var _i = 0, parties_7 = parties; _i < parties_7.length; _i++) {
+        var party = parties_7[_i];
+        niezrzeszeni -= party.count;
+    }
+}
 document.getElementById('add_p').addEventListener('click', function () {
     var party_name = document.getElementById('party_name_input');
     createPartyElement(party_name.value);
@@ -341,14 +346,52 @@ document.getElementById('play_button').addEventListener('click', function () {
     initialize();
     console.log("playing!");
     console.log("Number of parties: " + party_count);
-    console.log("Number of parties: " + party_count);
+    var u_input = document.getElementById("ustawa_name_input");
+    log("");
+    log("Ustawa: " + u_input.value);
     var legislation = setLegislation(axes);
     console.log(legislation);
+    displayOutcome(parties);
     calculateChanges(parties, axes, legislation);
+    countNiezrzeszeni(parties);
     updateCountDisplay(parties);
     colorCircles();
     console.log("finished calculating changes");
 });
+function displayOutcome(parties) {
+    var for_count = 0;
+    var against_count = 0;
+    var hold_count = 0;
+    if (Math.random() >= 0.5) {
+        log("Niezrzeszeni zagłosowali: ZA");
+        for_count += niezrzeszeni;
+    }
+    else {
+        log("Niezrzeszeni zagłosowali: PRZECIW");
+        against_count += niezrzeszeni;
+    }
+    for (var _i = 0, parties_8 = parties; _i < parties_8.length; _i++) {
+        var party = parties_8[_i];
+        if (party.vote == Vote.FOR) {
+            for_count += party.count;
+        }
+        else if (party.vote == Vote.AGAINST) {
+            against_count += party.count;
+        }
+        else if (party.vote == Vote.HOLD) {
+            hold_count += party.count;
+        }
+    }
+    log("ZA: " + for_count);
+    log("PRZECIW: " + against_count);
+    log("WSTRZYMAŁO SIĘ: " + hold_count);
+    if (for_count > against_count) {
+        log("Ustawa przyjęta");
+    }
+    else {
+        log("Ustawa odrzucona");
+    }
+}
 function createPartyElement(name) {
     var div = document.createElement('div');
     div.className = 'partia';
@@ -370,6 +413,7 @@ function initialize() {
     drawOnAxes();
     colorCircles();
     recalculateCountPerOpinion(parties);
+    countNiezrzeszeni(parties);
     party_value_inputs = document.querySelectorAll('.party_value_input');
     party_value_inputs.forEach(function (input) {
         input.addEventListener('change', initialize);
@@ -390,8 +434,8 @@ function drawOnAxes() {
     var playerElements = document.querySelectorAll('.player');
     playerElements.forEach(function (el) { return el.remove(); });
     var offset = 0;
-    for (var _i = 0, parties_7 = parties; _i < parties_7.length; _i++) {
-        var party = parties_7[_i];
+    for (var _i = 0, parties_9 = parties; _i < parties_9.length; _i++) {
+        var party = parties_9[_i];
         for (var i = 0; i <= 3; i++) {
             var axis = document.getElementById("axis_".concat(i));
             var base_position = party.values[i];
@@ -484,8 +528,8 @@ function fillContainerWithCircles(containerId, totalCircles, circlesPerColumn) {
 fillContainerWithCircles('koryto', 460, 46);
 function colorCircles() {
     var coloredCirclesCount = 0;
-    for (var _i = 0, parties_8 = parties; _i < parties_8.length; _i++) {
-        var party = parties_8[_i];
+    for (var _i = 0, parties_10 = parties; _i < parties_10.length; _i++) {
+        var party = parties_10[_i];
         for (var i = 0; i < party.count; i++) {
             var circle = document.getElementById("circle_".concat(coloredCirclesCount));
             if (circle) {
