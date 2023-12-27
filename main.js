@@ -50,54 +50,60 @@ var Party = /** @class */ (function () {
         }
     };
     Party.prototype.findClosestParty = function (parties, axis, legislation, vote) {
+        console.log("Szukamy najbliższej partii dla: " + this.name + " zagłosowano " + this.vote);
         var closestParty = null;
         var minDifference = Number.MAX_VALUE;
         var party_opinion = this.values[axis.order];
         if (vote == Vote.HOLD) {
             return this;
+            console.log("HOLD, pomijamy");
         }
-        for (var party in parties) {
-        }
-        if (vote == Vote.FOR) {
-            if (legislation.values[axis.order] <= 5) {
-                for (var _i = 0, parties_1 = parties; _i < parties_1.length; _i++) {
-                    var party = parties_1[_i];
-                    var difference = party_opinion - party.values[axis.order];
-                    if (difference < minDifference && difference <= 0 && party.vote != this.vote) {
-                        minDifference = difference;
+        for (var _i = 0, parties_1 = parties; _i < parties_1.length; _i++) {
+            var party = parties_1[_i];
+            if (legislation.values[axis.order] <= 5) { //LEWACKA USTAWA
+                if (this.vote == Vote.FOR) { //LEWACKA i głosowano ZA
+                    //Znajdź najbliższą partię na prawo
+                    console.log("rozstrzygam bliskość do " + party.name);
+                    console.log("party.values[axis.order] - party_opinion = " + (party.values[axis.order] - party_opinion));
+                    if (party.values[axis.order] - party_opinion < minDifference && party.values[axis.order] - party_opinion >= 0 && party.vote != this.vote) {
+                        minDifference = party.values[axis.order] - party_opinion;
+                        console.log("minDifference = " + (party.values[axis.order] - party_opinion));
                         closestParty = party;
+                        console.log("closestParty = " + party.name);
+                    }
+                }
+                else { //LEWACKA i głosowano PRZECIW
+                    //Znajdź najbliższą partię na lewo
+                    console.log("rozstrzygam bliskość do " + party.name);
+                    console.log("party_opinion - party.values[axis.order] = " + (party_opinion - party.values[axis.order]));
+                    if (party_opinion - party.values[axis.order] < minDifference && party_opinion - party.values[axis.order] >= 0 && party.vote != this.vote) {
+                        minDifference = party_opinion - party.values[axis.order];
+                        console.log("minDifference = " + (party_opinion - party.values[axis.order]));
+                        closestParty = party;
+                        console.log("closestParty = " + party.name);
                     }
                 }
             }
-            else {
-                for (var _a = 0, parties_2 = parties; _a < parties_2.length; _a++) {
-                    var party = parties_2[_a];
-                    var difference = party_opinion - party.values[axis.order];
-                    if (difference < minDifference && difference >= 0 && party.vote != this.vote) {
-                        minDifference = difference;
+            else { //PRAWACKA USTAWA
+                if (this.vote == Vote.FOR) { //PRAWACKA i głosowano ZA
+                    // Znajdź najbliższą partię na lewo
+                    console.log("rozstrzygam bliskość do " + party.name);
+                    console.log("party_opinion - party.values[axis.order] = " + (party_opinion - party.values[axis.order]));
+                    if (party_opinion - party.values[axis.order] < minDifference && party_opinion - party.values[axis.order] >= 0 && party.vote != this.vote) {
+                        minDifference = party_opinion - party.values[axis.order];
+                        console.log("minDifference = " + (party_opinion - party.values[axis.order]));
                         closestParty = party;
+                        console.log("closestParty = " + party.name);
                     }
                 }
-            }
-        }
-        else if (vote == Vote.AGAINST) {
-            if (legislation.values[axis.order] <= 5) {
-                for (var _b = 0, parties_3 = parties; _b < parties_3.length; _b++) {
-                    var party = parties_3[_b];
-                    var difference = party_opinion - party.values[axis.order];
-                    if (difference < minDifference && difference >= 0 && party.vote != this.vote) {
-                        minDifference = difference;
+                else {
+                    console.log("rozstrzygam bliskość do " + party.name);
+                    console.log("party.values[axis.order] - party_opinion = " + (party.values[axis.order] - party_opinion));
+                    if (party.values[axis.order] - party_opinion < minDifference && party.values[axis.order] - party_opinion >= 0 && party.vote != this.vote) {
+                        minDifference = party.values[axis.order] - party_opinion;
+                        console.log("minDifference = " + (party.values[axis.order] - party_opinion));
                         closestParty = party;
-                    }
-                }
-            }
-            else {
-                for (var _c = 0, parties_4 = parties; _c < parties_4.length; _c++) {
-                    var party = parties_4[_c];
-                    var difference = party_opinion - party.values[axis.order];
-                    if (difference < minDifference && difference <= 0 && party.vote != this.vote) {
-                        minDifference = difference;
-                        closestParty = party;
+                        console.log("closestParty = " + party.name);
                     }
                 }
             }
@@ -192,8 +198,8 @@ function log(message) {
 function calculateChanges(parties, axes, legislation) {
     log("");
     log("Ustawa: " + legislation.name);
-    for (var _i = 0, parties_5 = parties; _i < parties_5.length; _i++) {
-        var party = parties_5[_i];
+    for (var _i = 0, parties_2 = parties; _i < parties_2.length; _i++) {
+        var party = parties_2[_i];
         if (party.vote != Vote.HOLD) {
             for (var _a = 0, axes_1 = axes; _a < axes_1.length; _a++) {
                 var axis = axes_1[_a];
@@ -228,8 +234,8 @@ function updateCountDisplay(parties) {
     }
 }
 function recalculateCountPerOpinion(parties) {
-    for (var _i = 0, parties_6 = parties; _i < parties_6.length; _i++) {
-        var party = parties_6[_i];
+    for (var _i = 0, parties_3 = parties; _i < parties_3.length; _i++) {
+        var party = parties_3[_i];
         for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 10; j++) {
                 if (party.values[i] == j - 1 || party.values[i] == j + 3) {
@@ -250,8 +256,8 @@ function recalculateCountPerOpinion(parties) {
 }
 function getFor(parties) {
     var count = 0;
-    for (var _i = 0, parties_7 = parties; _i < parties_7.length; _i++) {
-        var party = parties_7[_i];
+    for (var _i = 0, parties_4 = parties; _i < parties_4.length; _i++) {
+        var party = parties_4[_i];
         if (party.vote == Vote.FOR)
             count += party.count;
     }
@@ -259,8 +265,8 @@ function getFor(parties) {
 }
 function getAgainst(parties) {
     var count = 0;
-    for (var _i = 0, parties_8 = parties; _i < parties_8.length; _i++) {
-        var party = parties_8[_i];
+    for (var _i = 0, parties_5 = parties; _i < parties_5.length; _i++) {
+        var party = parties_5[_i];
         if (party.vote == Vote.AGAINST)
             count += party.count;
     }
@@ -268,8 +274,8 @@ function getAgainst(parties) {
 }
 function getHold(parties) {
     var count = 0;
-    for (var _i = 0, parties_9 = parties; _i < parties_9.length; _i++) {
-        var party = parties_9[_i];
+    for (var _i = 0, parties_6 = parties; _i < parties_6.length; _i++) {
+        var party = parties_6[_i];
         if (party.vote == Vote.HOLD)
             count += party.count;
     }
@@ -382,8 +388,8 @@ function drawOnAxes() {
     var playerElements = document.querySelectorAll('.player');
     playerElements.forEach(function (el) { return el.remove(); });
     var offset = 0;
-    for (var _i = 0, parties_10 = parties; _i < parties_10.length; _i++) {
-        var party = parties_10[_i];
+    for (var _i = 0, parties_7 = parties; _i < parties_7.length; _i++) {
+        var party = parties_7[_i];
         for (var i = 0; i <= 3; i++) {
             var axis = document.getElementById("axis_".concat(i));
             var base_position = party.values[i];
@@ -476,8 +482,8 @@ function fillContainerWithCircles(containerId, totalCircles, circlesPerColumn) {
 fillContainerWithCircles('koryto', 460, 46);
 function colorCircles() {
     var coloredCirclesCount = 0;
-    for (var _i = 0, parties_11 = parties; _i < parties_11.length; _i++) {
-        var party = parties_11[_i];
+    for (var _i = 0, parties_8 = parties; _i < parties_8.length; _i++) {
+        var party = parties_8[_i];
         for (var i = 0; i < party.count; i++) {
             var circle = document.getElementById("circle_".concat(coloredCirclesCount));
             if (circle) {

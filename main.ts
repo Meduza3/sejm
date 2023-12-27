@@ -58,55 +58,63 @@ class Party {
     }
 
     findClosestParty(parties: Party[], axis: Axis, legislation: Legislation, vote: Vote): Party{
+        console.log("Szukamy najbliższej partii dla: " + this.name + " zagłosowano " + this.vote )
         let closestParty: Party | null = null;
         let minDifference: number = Number.MAX_VALUE;
         let party_opinion = this.values[axis.order];
 
         if(vote == Vote.HOLD){
             return this;
+            console.log("HOLD, pomijamy")
         }
 
-        for(let party in parties){
-
-        }
-
-        if(vote == Vote.FOR){
-            if(legislation.values[axis.order] <= 5){
-                for(let party of parties){
-                    const difference = party_opinion - party.values[axis.order];
-                    if(difference < minDifference && difference <= 0 && party.vote != this.vote){
-                        minDifference = difference;
+        for(let party of parties){
+            if(legislation.values[axis.order] <= 5){ //LEWACKA USTAWA
+                if(this.vote == Vote.FOR){ //LEWACKA i głosowano ZA
+                    //Znajdź najbliższą partię na prawo
+                    console.log("rozstrzygam bliskość do " + party.name)
+                    console.log("party.values[axis.order] - party_opinion = " + (party.values[axis.order] - party_opinion))
+                    if(party.values[axis.order] - party_opinion < minDifference && party.values[axis.order] - party_opinion >= 0 && party.vote != this.vote){
+                        minDifference = party.values[axis.order] - party_opinion;
+                        console.log("minDifference = " + (party.values[axis.order] - party_opinion))
                         closestParty = party;
+                        console.log("closestParty = "+party.name)
+                    }
+                } else { //LEWACKA i głosowano PRZECIW
+                    //Znajdź najbliższą partię na lewo
+                    console.log("rozstrzygam bliskość do " + party.name)
+                    console.log("party_opinion - party.values[axis.order] = " + (party_opinion - party.values[axis.order]))
+                    if(party_opinion - party.values[axis.order] < minDifference && party_opinion - party.values[axis.order] >= 0 && party.vote != this.vote){
+                        minDifference = party_opinion - party.values[axis.order];
+                        console.log("minDifference = " + (party_opinion - party.values[axis.order]))
+                        closestParty = party;
+                        console.log("closestParty = "+party.name)
                     }
                 }
-            } else {
-                for(let party of parties){
-                    const difference = party_opinion - party.values[axis.order];
-                    if(difference < minDifference && difference >= 0 && party.vote != this.vote){
-                        minDifference = difference;
+            } else { //PRAWACKA USTAWA
+                if(this.vote == Vote.FOR){ //PRAWACKA i głosowano ZA
+                    // Znajdź najbliższą partię na lewo
+                    console.log("rozstrzygam bliskość do " + party.name)
+                    console.log("party_opinion - party.values[axis.order] = " + (party_opinion - party.values[axis.order]))
+                    if(party_opinion - party.values[axis.order] < minDifference && party_opinion - party.values[axis.order] >= 0 && party.vote != this.vote){
+                        minDifference = party_opinion - party.values[axis.order];
+                        console.log("minDifference = " + (party_opinion - party.values[axis.order]))
                         closestParty = party;
+                        console.log("closestParty = "+party.name)
+                    }
+                } else {
+                    console.log("rozstrzygam bliskość do " + party.name)
+                    console.log("party.values[axis.order] - party_opinion = " + (party.values[axis.order] - party_opinion))
+                    if(party.values[axis.order] - party_opinion < minDifference && party.values[axis.order] - party_opinion >= 0 && party.vote != this.vote){
+                        minDifference = party.values[axis.order] - party_opinion;
+                        console.log("minDifference = " + (party.values[axis.order] - party_opinion))
+                        closestParty = party;
+                        console.log("closestParty = "+party.name)
                     }
                 }
             }
-        } else if(vote == Vote.AGAINST){
-            if(legislation.values[axis.order] <= 5){
-                for(let party of parties){
-                    const difference = party_opinion - party.values[axis.order];
-                    if(difference < minDifference && difference >= 0 && party.vote != this.vote){
-                        minDifference = difference;
-                        closestParty = party;
-                    }
-                }
-            } else {
-                for(let party of parties){
-                    const difference = party_opinion - party.values[axis.order];
-                    if(difference < minDifference && difference <= 0 && party.vote != this.vote){
-                        minDifference = difference;
-                        closestParty = party;
-                    }
-                }
-            }
         }
+
         if(closestParty == null){
             return new Party("Niezrzeszeni", 0, [0,0,0,0], "grey");
         }
