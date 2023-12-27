@@ -233,18 +233,21 @@ function calculateChanges(parties: Party[], axes: Axis[], legislation: Legislati
                 }
                 let mad: number = party.calculateMad(legislation, axis);
                 let furious: number = Math.ceil(mad/5);
-                //console.log(party.name + " " + axis.name + " Furious: " + furious);
-                let closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
-                //console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
-                party.count -= furious;
-                //console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
-                if(closestParty == null){
-                    niezrzeszeni += furious;
-                } else {
-                    closestParty.count += furious;
-                    //console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
-                }
+                if(furious > 0){
+                    //console.log(party.name + " " + axis.name + " Furious: " + furious);
+                    let closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
+                    //console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
+                    party.count -= furious;
+                    //console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
+                    if(closestParty == null){
+                        niezrzeszeni += furious;
+                    } else {
+                        closestParty.count += furious;
+                        //console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
+                    }
                 log(party.name + " on axis " + axis.name + ": " + furious + " going to " + closestParty.name );
+                }
+                
             }
         }
 

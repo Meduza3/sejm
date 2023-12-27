@@ -208,19 +208,21 @@ function calculateChanges(parties, axes, legislation) {
                 }
                 var mad = party.calculateMad(legislation, axis);
                 var furious = Math.ceil(mad / 5);
-                //console.log(party.name + " " + axis.name + " Furious: " + furious);
-                var closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
-                //console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
-                party.count -= furious;
-                //console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
-                if (closestParty == null) {
-                    niezrzeszeni += furious;
+                if (furious > 0) {
+                    //console.log(party.name + " " + axis.name + " Furious: " + furious);
+                    var closestParty = party.findClosestParty(parties, axis, legislation, party.vote);
+                    //console.log(party.name + " " + axis.name + " ClosestParty: " + closestParty.name)
+                    party.count -= furious;
+                    //console.log(party.name + " " + axis.name + " Party.count - furious: " + party.count)
+                    if (closestParty == null) {
+                        niezrzeszeni += furious;
+                    }
+                    else {
+                        closestParty.count += furious;
+                        //console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
+                    }
+                    log(party.name + " on axis " + axis.name + ": " + furious + " going to " + closestParty.name);
                 }
-                else {
-                    closestParty.count += furious;
-                    //console.log(party.name + " " + axis.name + " ClosestParty.count + furious: " + closestParty.count)
-                }
-                log(party.name + " on axis " + axis.name + ": " + furious + " going to " + closestParty.name);
             }
         }
         console.log(party.name + " count: " + party.count);
